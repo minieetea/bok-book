@@ -20,6 +20,7 @@ def home():
 @app.route('/book', methods=['POST'])
 def paste_book():
     # 클립보드에 있는거 불러오기
+    global ebook_price, ebook
     text = clipboard.paste()
     print(text)
 
@@ -31,23 +32,39 @@ def paste_book():
     data = requests.get(url, headers=headers)
 
     soup = BeautifulSoup(data.text, 'html.parser')
+    # infoarea = soup.select('#yDetailTopWrap > div.topColRgt > div.gd_infoBot > div.gd_infoTbArea')
 
     og_image = soup.select_one('meta[property="og:image"]')['content']
     og_title = soup.select_one('meta[property="og:title"]')['content']
     og_description = soup.select_one('meta[property="og:description"]')['content']
     og_author = soup.select_one('meta[name="author"]')['content']
+    price = soup.select_one('.nor_price > em').text
+
+    # 전자책 없는 케이스 처리
+    ## yes24 는 책 정보내에 토글 버튼은 0~3개가 노출된다
+    ## ebook이 있는 경우 토글 버튼 1번째에 ebook 이라고 표시된다.
+    ## ebook이라는 텍스트가 포함된 토글일 경우, 전자책 가격을 꺼내온다.
+    # divInfo = soup.find('#divFormatInfo')
+    # if divInfo != None:
+    #     ebook_price = soup.select_one('#divFormatInfo > ul > li > a > em').text
+
 
     print(og_image)
     print(og_title)
     print(og_description)
     print(og_author)
+    print(price)
+    # print(ebook_price)
+
 
     bookinfo = {
         'url': url,
         'title': og_title,
         'image': og_image,
         'desc': og_description,
-        'author': og_author
+        'author': og_author,
+        'price': price
+        # 'ebook_price': ebook_price
     }
     return jsonify({'result': 'success', 'msg': '성공ㅆ~', 'bookinfo': bookinfo})
 

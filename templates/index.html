@@ -16,6 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
             integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
             crossorigin="anonymous"></script>
+    <!--    <script src="dist/clipboard.min.js"></script> &lt;!&ndash; 클립보드 스크립트 &ndash;&gt;-->
 
     <!-- 구글폰트 -->
     <!--    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">-->
@@ -49,11 +50,14 @@
     </style>
     <script>
         $(document).ready(function () {
-            $("#book-info").html(""); // 화면에 출력되어 있는 결과를 비운다
+            $("#book-info").html("");
         });
 
         function pasteBook() {
             //1. 책 정보를 가져오는 애를 호출하자.
+            // window.clipboardData.getData('Text');
+            // alert(clipboard);
+
             $.ajax({
                 type: "POST",
                 url: "/book",
@@ -67,26 +71,35 @@
                         let desc = info['desc'];
                         let author = info['author'];
                         let image = info['image'];
-
-                        scrapingResult(title, url, desc, author, image);
+                        let price = info['price'];
+                        // let ebook_price = info['ebook_price'];
+                        // if(ebook_price>0)
+                        //     scrapingResult(title, url, desc, author, image, price, ebook_price);
+                        // else
+                            scrapingResult(title, url, desc, author, image, price);
                         // window.location.reload();
                     }
                 }
             })
         }
 
-        function scrapingResult(title, url, desc, author, image) {
-            let tempHtml = `<div class="card">
-            <img class="card-img-top"
-                 src="${image}"
-                 alt="Card image cap">
-            <div class="card-body">
-                <a href="${url}" class="card-title">${title}</a>
-                <p class="card-text">${desc}</p>
-                <p class="card-text comment">${author}</p>
+        function scrapingResult(title, url, desc, author, image, price) {
+            let horicard = `<div class="card mb-3" style="max-width: 540px;">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="${image}" class="card-img" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="${url}">${title}</a></h5>
+                        <p class="card-text">${desc}</p>
+                        <p class="card-text"><small class="text-muted">${author}</small></p>
+                        <p class="card-text"><small class="text-muted">${price}</small></p>
+                    </div>
+                </div>
             </div>
         </div>`
-            $('#book-info').append(tempHtml);
+            $('#book-info').append(horicard);
         }
 
         function showArticles() {
@@ -111,28 +124,10 @@
     <div class="jumbotron">
         <h1 class="display-4">책 찾아요 진짜 찾아요</h1>
         <p class="lead">서점이든 내책이든 어쨋든 좀 찾아봅시다</p>
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="검색할 책 이름을 넣어주세요" aria-label="검색할 책 이름을 넣어주세요"
-                   aria-describedby="button-addon2">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="pasteBook()">네이버
-                    검색하기
-                </button>
-            </div>
-        </div>
+        <button type="button" class="btn btn-secondary" onclick="pasteBook()">붙여넣기</button>
     </div>
 
-    <div id="book-info" class="card-columns">
-        <div class="card">
-            <img class="card-img-top"
-                 src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"
-                 alt="Card image cap">
-            <div class="card-body">
-                <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>
-                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
-            </div>
-        </div>
+    <div id="book-info">
 
     </div>
 </div>
