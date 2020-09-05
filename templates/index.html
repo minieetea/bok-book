@@ -49,58 +49,59 @@
     </style>
     <script>
         $(document).ready(function () {
-            $("#id").html(""); // 화면에 출력되어 있는 결과를 비운다
-            showArticles(); // 함수부르기
+            $("#book-info").html(""); // 화면에 출력되어 있는 결과를 비운다
         });
 
-        function openClose() {
-        }
-        }
-
-        function searchBook() {
-            //1. 책 이름을 가져온다.
-            //2. 미입력시 밸리데이션
-            if () {
-                alert('입력해주세요')
-                return;
-            }
-
-            //3. 네이버에서 검색한다.
+        function pasteBook() {
+            //1. 책 정보를 가져오는 애를 호출하자.
             $.ajax({
                 type: "POST",
-                url: "/search",
-                data: {title: title},
-
+                url: "/book",
+                data: {},
                 success: function (response) { // 성공하면
                     if (response["result"] == "success") {
-                        alert(response["msg"]);
-                        window.location.reload();
+                        let info = response["bookinfo"];
+                        console.log(info);
+                        let title = info['title'];
+                        let url = info['url'];
+                        let desc = info['desc'];
+                        let author = info['author'];
+                        let image = info['image'];
+
+                        scrapingResult(title, url, desc, author, image);
+                        // window.location.reload();
                     }
                 }
             })
         }
 
+        function scrapingResult(title, url, desc, author, image) {
+            let tempHtml = `<div class="card">
+            <img class="card-img-top"
+                 src="${image}"
+                 alt="Card image cap">
+            <div class="card-body">
+                <a href="${url}" class="card-title">${title}</a>
+                <p class="card-text">${desc}</p>
+                <p class="card-text comment">${author}</p>
+            </div>
+        </div>`
+            $('#book-info').append(tempHtml);
+        }
+
         function showArticles() {
             $.ajax({
                 type: "GET",
-                url: "/search",
+                url: "/book",
                 data: {},
                 success: function (response) {
                     if (response["result"] == "success") {
                         // 검색 결과를 노출한다.
                     }
                 }
-            }
+            })
         }
 
-        )
-        }
-
-        //리스트로 그리기
-        function searchResult() {
-            let tempHtml = ``
-            $('#result-row').append(tempHtml);
-        }
     </script>
 
 </head>
@@ -114,55 +115,26 @@
             <input type="text" class="form-control" placeholder="검색할 책 이름을 넣어주세요" aria-label="검색할 책 이름을 넣어주세요"
                    aria-describedby="button-addon2">
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="searchBook()">네이버
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="pasteBook()">네이버
                     검색하기
                 </button>
             </div>
         </div>
     </div>
 
-
-    <div id="post-box" class="form-post" style="display:none">
-        <div>
-            <div class="form-group">
-                <label for="post-url">아티클 URL</label>
-                <input id="post-url" class="form-control" placeholder="">
+    <div id="book-info" class="card-columns">
+        <div class="card">
+            <img class="card-img-top"
+                 src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"
+                 alt="Card image cap">
+            <div class="card-body">
+                <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>
+                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
             </div>
-            <div class="form-group">
-                <label for="post-comment">간단 코멘트</label>
-                <textarea id="post-comment" class="form-control" rows="2"></textarea>
-            </div>
-            <button type="button" class="btn btn-primary" onclick="postArticle()">기사저장</button>
         </div>
-    </div>
-    <div id="search-result" class="result-row">
-        <table class="table">
-            <thead class="thead-dark">
-            <tr>
-                <th scope="col">검색결과</th>
-                <th scope="col">책 정보</th>
-                <th scope="col">가격</th>
-                <th scope="col">전자책</th>
-                <th scope="col">구입가능여부</th>
-
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>1</td>
-                <td>
-                    <p style="font-weight: bold">소설 타이틀</p>
-                    <p>소설책 설명을 블라블라하</p>
-                </td>
-                <td>@mdo</td>
-                <td><a href="#" class="badge badge-success">Success</a></td>
-                <td><a href="#" class="badge badge-success">Success</a></td>
-            </tr>
-            </tbody>
-        </table>
 
     </div>
-</div>
 </div>
 </body>
 
