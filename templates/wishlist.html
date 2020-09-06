@@ -21,53 +21,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
             integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
             crossorigin="anonymous"></script>
-    <!--    <script src="dist/clipboard.min.js"></script> &lt;!&ndash; 클립보드 스크립트 &ndash;&gt;-->
-
-    <!-- 구글폰트 -->
-    <!--    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">-->
-
+    <!-- js, css 파일 분리-->
+    <script src="/static/script.js"></script>
+    <link rel="stylesheet" href="/static/bokbook.css"/>
 
     <title>복불복</title>
-
-    <!-- style -->
-    <style type="text/css">
-        * {
-            font-family: "Stylish", sans-serif;
-        }
-
-        .wrap {
-            width: 900px;
-            margin: auto;
-        }
-
-        .alert {
-            position: relative;
-            padding: .75rem 0rem;
-            margin-bottom: 1rem;
-            border: 1px solid transparent;
-            border-radius: .25rem;
-        }
-
-        .alert-danger {
-            color: #721c24;
-            background-color: #ffffff;
-            border-color: #ffffff;
-        }
-
-        input[type="date"]::-webkit-calendar-picker-indicator,
-        input[type="date"]::-webkit-inner-spin-button {
-            display: none;
-            appearance: none;
-        }
-
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            color: rgba(0, 0, 0, 0);
-            display: block;
-            background: url(https://mywildalberta.ca/images/GFX-MWA-Parks-Reservations.png) no-repeat;
-            height: 20px;
-            border-width: thin;
-        }
-    </style>
     <script>
         $(document).ready(function () {
             $("#book-info").html("");
@@ -95,7 +53,7 @@
                             let price = wishlist[i]['price'];
                             let isbn = wishlist[i]['isbn'];
                             console.log(title, url, desc, author, image, price, isbn);
-                            appendHoricard(title, url, desc, author, image, price, isbn);
+                            appendHoricard2(title, url, desc, author, image, price, isbn);
                         }
                     }
                 }
@@ -111,12 +69,12 @@
                 success: function (response) { // 성공하면
                     if (response["result"] == "success")
                         console.log("지웠다");
-                        window.location.reload();
+                    window.location.reload();
                 }
             })
         }
 
-        function appendHoricard(title, url, desc, author, image, price, isbn) {
+        function appendHoricard2(title, url, desc, author, image, price, isbn) {
             let horicard = `<div class="card">
             <div class="row no-gutters">
                 <div class="col-md-4">
@@ -149,9 +107,7 @@
         </div>`
             $('#book-info').append(horicard);
         }
-
     </script>
-
 </head>
 
 <body>
@@ -159,9 +115,9 @@
     <div class="jumbotron">
         <h1 class="display-4">위시리스트</h1>
         <p class="lead">서점이든 내책이든 어쨋든 좀 찾아봅시다</p>
-        <!--        <button type="button" class="btn btn-secondary" onclick="pasteBook()">붙여넣기</button>-->
     </div>
     <div id="book-info">
+        왜 안나오지?
     </div>
 </div>
 </body>

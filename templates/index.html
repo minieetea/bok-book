@@ -21,166 +21,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
             integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
             crossorigin="anonymous"></script>
-    <!--    <script src="dist/clipboard.min.js"></script> &lt;!&ndash; 클립보드 스크립트 &ndash;&gt;-->
 
-    <!-- 구글폰트 -->
-    <!--    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">-->
-
+    <!-- js, css 파일 분리-->
+    <script src="/static/script.js"></script>
+    <link rel="stylesheet" href="/static/bokbook.css"/>
 
     <title>복불복</title>
 
-    <!-- style -->
-    <style type="text/css">
-        * {
-            font-family: "Stylish", sans-serif;
-        }
-
-        .wrap {
-            width: 900px;
-            margin: auto;
-        }
-
-        .alert {
-            position: relative;
-            padding: .75rem 0rem;
-            margin-bottom: 1rem;
-            border: 1px solid transparent;
-            border-radius: .25rem;
-        }
-
-        .alert-danger {
-            color: #721c24;
-            background-color: #ffffff;
-            border-color: #ffffff;
-        }
-
-        input[type="date"]::-webkit-calendar-picker-indicator,
-        input[type="date"]::-webkit-inner-spin-button {
-            display: none;
-            appearance: none;
-        }
-
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            color: rgba(0, 0, 0, 0);
-            display: block;
-            background: url(https://mywildalberta.ca/images/GFX-MWA-Parks-Reservations.png) no-repeat;
-            height: 20px;
-            border-width: thin;
-        }
-    </style>
     <script>
         $(document).ready(function () {
             $("#book-info").html("");
         });
 
-        function pasteBook() {
-            //1. 책 정보를 가져오는 애를 호출하자.
-            // window.clipboardData.getData('Text');
-            // alert(clipboard);
-
-            $.ajax({
-                type: "POST",
-                url: "/pastebook",
-                data: {},
-                success: function (response) { // 성공하면
-                    if (response["result"] == "success") {
-                        let info = response["bookinfo"];
-                        console.log(info);
-                        let title = info['title'];
-                        let url = info['url'];
-                        let desc = info['desc'];
-                        let author = info['author'];
-                        let image = info['image'];
-                        let price = info['price'];
-                        let isbn = info['isbn'];
-                        // let ebook_price = info['ebook_price'];
-                        // if(ebook_price>0)
-                        //     scrapingResult(title, url, desc, author, image, price, ebook_price);
-                        // else
-                        appendHoricard(title, url, desc, author, image, price, isbn);
-                        // window.location.reload();
-                    }
-                }
-            })
-        }
-
-        function addWishlist() {
-            <!--요소에서 각 값 가져오기-->
-            let url = $('#store-url').attr('href');
-            let title = $('#title').text();
-            let desc = $('#desc').text();
-            let author = $('#author').text();
-            let image = $('#bookcover').attr('src');
-            let price = $('#price').text();
-            let isbn = $('#isbn').text();
-
-            console.log('index.html 화면에서 추출완료===============');
-            console.log(url); // a 태그의 속성값 가져와야함
-            console.log(title);
-            console.log(desc);
-            console.log(author);
-            console.log(image); //img 태그의 속성값 가져와야함
-            console.log(price);
-            console.log(isbn);
-            <!--위시리스트에 추가하기-->
-            $.ajax({
-                type: "POST",
-                url: "/addWishlist",
-                data: {url: url, title: title, desc: desc, author: author, image: image, price: price, isbn: isbn},
-                success: function (response) { // 성공하면
-                    if (response["result"] == "success") {
-                        alert(response["msg"])
-                    }
-                }
-            })
-        }
-
-        function appendHoricard(title, url, desc, author, image, price, isbn) {
-            let horicard = `<div class="card">
-            <div class="row no-gutters">
-                <div class="col-md-4">
-                    <img src="${image}" class="card-img" id="bookcover">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <a id="store-url" href="${url}"><h5 class="card-title" id="title">${title}</h5></a>
-                        <p id="isbn">${isbn}</p>
-                        <p class="card-text"><small class="text-muted" id="author">${author}</small><small class="text-muted" id="price">${price}</small></p>
-                        <p class="card-text" id="desc">${desc}</p>
-                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                          <div class="btn-group mr-2" role="group" aria-label="button group">
-                            <button type="button" class="btn btn-primary"><i class="far fa-credit-card"></i> 복</button>
-                            <button type="button" class="btn btn-secondary"><i class="fas fa-wallet"></i> 불복</button>
-                          </div>
-                          <div class="btn-group mr-1" role="group" aria-label="third group">
-                            <button type="button" class="btn btn-light"><i class="fas fa-retweet"></i> 빌려보기</button>
-                          </div>
-                          <div class="btn-group mr-1" role="group" aria-label="second group">
-                            <button type="button" class="btn btn-light" onclick="addWishlist()"><i class="fas fa-cart-arrow-down"></i> 나중에 사기</button>
-                          </div>
-
-                          <div class="alert alert-danger" role="alert">
-                              <i class="fas fa-exclamation-triangle"> </i><a href="#" class="alert-link">보유 중인 책(복)</a>입니다. 사기전에 다시 생각하세요.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>`
-            $('#book-info').append(horicard);
-        }
-
-        function showArticles() {
-            $.ajax({
-                type: "GET",
-                url: "/book",
-                data: {},
-                success: function (response) {
-                    if (response["result"] == "success") {
-                        // 검색 결과를 노출한다.
-                    }
-                }
-            })
+        window.onload = function () {
+            var pastebook = document.getElementById("pastebook");
+            pastebook.addEventListener('click', pasteBook, false);
         }
 
     </script>
@@ -188,15 +43,38 @@
 </head>
 
 <body>
+<!-- Image and text -->
+<nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="#" style="font-family: 'Hanna', sans-serif">
+        <img src="/static/icon_bok.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+        서재복불복</a>
+</nav>
 <div class="wrap">
     <div class="jumbotron">
         <h1 class="display-4">책 찾아요 진짜 찾아요</h1>
         <p class="lead">서점이든 내책이든 어쨋든 좀 찾아봅시다</p>
-        <button type="button" class="btn btn-secondary" onclick="pasteBook()">붙여넣기</button>
+        <button type="button" class="btn btn-secondary" id="pastebook">붙여넣기</button>
     </div>
     <div id="book-info">
     </div>
 </div>
+<nav class="fixed-bottom">
+    <ul class="nav nav-pills nav-fill">
+        <li class="nav-item">
+            <a class="nav-link active" href="/">책추가</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/wishlist">위시리스트</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">내책보기</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+        </li>
+    </ul>
+</nav>
+
 </body>
 
 </html>
