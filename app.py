@@ -16,11 +16,10 @@ def home():
     return render_template('index.html')
 
 
-## API 역할을 하는 부분
-@app.route('/book', methods=['POST'])
+## 메인페이지 책 스크랩핑 API 역할을 하는 부분
+@app.route('/pastebook', methods=['POST'])
 def paste_book():
     # 클립보드에 있는거 불러오기
-    global ebook_price, ebook
     text = clipboard.paste()
     print(text)
 
@@ -50,13 +49,8 @@ def paste_book():
     #     ebook_price = soup.select_one('#divFormatInfo > ul > li > a > em').text
 
 
-    print(og_image)
-    print(og_title)
-    print(og_description)
-    print(og_author)
-    print(price)
-    print(isbn)
-    # print(ebook_price)
+    print('Yes24 조회완료===========')
+    print(og_image, og_title, og_author, og_description, price, isbn)
 
 
     bookinfo = {
@@ -71,14 +65,40 @@ def paste_book():
     return jsonify({'result': 'success', 'msg': '성공ㅆ~', 'bookinfo': bookinfo})
 
 
-@app.route('/book', methods=['GET'])
-def read_bookmeta():
-    # 1. mongoDB에서 _id 값을 제외한 모든 데이터 조회해오기(Read)
-    all_memos = list(db.alonememo.find({}, {'_id': False}))
+## 나중에 사기 api
+@app.route('/wishlist', methods=['POST'])
+def post_wishlist():
+    #1. 책 정보 받아오기
 
-    # 2. articles라는 키 값으로 articles 정보 보내주기
-    return jsonify({'result': 'success', 'memos': all_memos})
+    url_receive = request.form['url']
+    title_receive = request.form['title']
+    image_receive = request.form['image']
+    desc_receive = request.form['desc']
+    author_receive = request.form['author']
+    price_receive = request.form['price']
+    isbn_receive = request.form['isbn']
+    print("위시리스트 조회완료=======================")
+    print(url_receive, title_receive, image_receive, desc_receive, author_receive, price_receive, isbn_receive)
 
+    #2. 디비 조회해보기
+
+    #3. 중복된 거 없으면 넣기
+
+    #4. 결과 알려주기
+    return jsonify({'result': 'success', 'msg': '즐겨찾기 추가ㅆ~'})
+
+
+
+# @app.route('/book', methods=['GET'])
+# def read_bookmeta():
+#     # 1. mongoDB에서 _id 값을 제외한 모든 데이터 조회해오기(Read)
+#     all_memos = list(db.alonememo.find({}, {'_id': False}))
+#
+#     # 2. articles라는 키 값으로 articles 정보 보내주기
+#     return jsonify({'result': 'success', 'memos': all_memos})
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
+
+
+
