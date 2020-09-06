@@ -84,7 +84,8 @@ def post_wishlist():
         'price': price_receive,
         'isbn': isbn_receive,
         'url': url_receive,
-        'status': 'WISH'
+        'status': 'WISH',
+        'deleted': False
     }
 
     # 3. isbn 또는 title 중복된 거 없으면 넣기
@@ -103,12 +104,26 @@ def wishlist():
 @app.route('/getWishlist', methods=['GET'])
 def read_bookmeta():
     # 1. mongoDB에서 _id 값을 제외한 모든 데이터 조회해오기(Read)
-    all_wishlist = list(db.wishlist.find({}, {'_id': False}))
+    all_wishlist = list(db.wishlist.find({'deleted': False}, {'_id': False}))
 
     print(db.wishlist.find({}, {'_id': False}))
 
     # 2. articles라는 키 값으로 articles 정보 보내주기
     return jsonify({'result': 'success', 'msg': '불러왔습니다', 'wishbooks': all_wishlist})
+
+@app.route('/removeWishlist', methods=['POST'])
+def remove_wishlist():
+    # 1. 데이터찾기
+    isbn_receive = request.form['isbn']
+    print(isbn_receive)
+
+    db.wishlist.update_many({'isbn': isbn_receive}, {'$set': {'deleted': True}})
+    result = db.wishlist.find_one({'isbn': isbn_receive})
+    print(result)
+
+    # 2. articles라는 키 값으로 articles 정보 보내주기
+    return jsonify({'result': 'success', 'msg': '삭제함'})
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)

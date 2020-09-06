@@ -102,6 +102,20 @@
             });
         }
 
+        function removeWishlist() {
+            let isbn = $('#isbn').text();
+            $.ajax({
+                type: "POST",
+                url: "/removeWishlist",
+                data: {isbn: isbn},
+                success: function (response) { // 성공하면
+                    if (response["result"] == "success")
+                        console.log("지웠다");
+                        window.location.reload();
+                }
+            })
+        }
+
         function appendHoricard(title, url, desc, author, image, price, isbn) {
             let horicard = `<div class="card">
             <div class="row no-gutters">
