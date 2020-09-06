@@ -11,6 +11,11 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
 
+    <!-- font awesome -->
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"/>
+
     <!-- JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
@@ -35,17 +40,32 @@
             margin: auto;
         }
 
-        .comment {
-            color: blue;
-            font-weight: bold;
+        .alert {
+            position: relative;
+            padding: .75rem 0rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: .25rem;
         }
 
-        #post-box {
-            width: 500px;
-            margin: 20px auto;
-            padding: 50px;
-            border: black solid;
-            border-radius: 5px;
+        .alert-danger {
+            color: #721c24;
+            background-color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="date"]::-webkit-inner-spin-button {
+            display: none;
+            appearance: none;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            color: rgba(0, 0, 0, 0);
+            display: block;
+            background: url(https://mywildalberta.ca/images/GFX-MWA-Parks-Reservations.png) no-repeat;
+            height: 20px;
+            border-width: thin;
         }
     </style>
     <script>
@@ -76,7 +96,7 @@
                         // if(ebook_price>0)
                         //     scrapingResult(title, url, desc, author, image, price, ebook_price);
                         // else
-                            scrapingResult(title, url, desc, author, image, price);
+                        scrapingResult(title, url, desc, author, image, price);
                         // window.location.reload();
                     }
                 }
@@ -84,7 +104,7 @@
         }
 
         function scrapingResult(title, url, desc, author, image, price) {
-            let horicard = `<div class="card mb-3" style="max-width: 540px;">
+            let horicard = `<div class="card">
             <div class="row no-gutters">
                 <div class="col-md-4">
                     <img src="${image}" class="card-img" alt="...">
@@ -92,9 +112,24 @@
                 <div class="col-md-8">
                     <div class="card-body">
                         <h5 class="card-title"><a href="${url}">${title}</a></h5>
+                        <p class="card-text"><small class="text-muted">${author} / ${price}</small></p>
                         <p class="card-text">${desc}</p>
-                        <p class="card-text"><small class="text-muted">${author}</small></p>
-                        <p class="card-text"><small class="text-muted">${price}</small></p>
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                          <div class="btn-group mr-2" role="group" aria-label="button group">
+                            <button type="button" class="btn btn-primary"><i class="far fa-credit-card"></i> 복</button>
+                            <button type="button" class="btn btn-secondary"><i class="fas fa-wallet"></i> 불복</button>
+                          </div>
+                          <div class="btn-group mr-1" role="group" aria-label="second group">
+                            <button type="button" class="btn btn-light"><i class="fas fa-cart-arrow-down"></i> 나중에 사기</button>
+                          </div>
+                          <div class="btn-group mr-1" role="group" aria-label="third group">
+                            <button type="button" class="btn btn-light"><i class="fas fa-retweet"></i> 빌려보기</button>
+                          </div>
+
+                          <div class="alert alert-danger" role="alert">
+                              <i class="fas fa-exclamation-triangle"> </i><a href="#" class="alert-link">보유 중인 책(복)</a>입니다. 사기전에 다시 생각하세요.
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -126,9 +161,7 @@
         <p class="lead">서점이든 내책이든 어쨋든 좀 찾아봅시다</p>
         <button type="button" class="btn btn-secondary" onclick="pasteBook()">붙여넣기</button>
     </div>
-
     <div id="book-info">
-
     </div>
 </div>
 </body>

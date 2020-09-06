@@ -38,6 +38,7 @@ def paste_book():
     og_title = soup.select_one('meta[property="og:title"]')['content']
     og_description = soup.select_one('meta[property="og:description"]')['content']
     og_author = soup.select_one('meta[name="author"]')['content']
+    isbn = soup.select_one('meta[property="books:isbn"]')['content']
     price = soup.select_one('.nor_price > em').text
 
     # 전자책 없는 케이스 처리
@@ -54,6 +55,7 @@ def paste_book():
     print(og_description)
     print(og_author)
     print(price)
+    print(isbn)
     # print(ebook_price)
 
 
@@ -63,8 +65,8 @@ def paste_book():
         'image': og_image,
         'desc': og_description,
         'author': og_author,
-        'price': price
-        # 'ebook_price': ebook_price
+        'price': price,
+        'isbn': isbn
     }
     return jsonify({'result': 'success', 'msg': '성공ㅆ~', 'bookinfo': bookinfo})
 
