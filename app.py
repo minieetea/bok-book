@@ -81,12 +81,30 @@ def post_wishlist():
     print(url_receive, title_receive, image_receive, desc_receive, author_receive, price_receive, isbn_receive)
 
     #2. 디비 조회해보기
+    # temp = list(db.wishlist.find({}, {'_id': False}))
+    # print(temp)
 
-    #3. 중복된 거 없으면 넣기
+    isbnbooks = db.wishlist.find_one({'isbn': isbn_receive}, {'_id': False})
+    titlebooks = db.wishlist.find_one({'title': title_receive}, {'_id': False})
+    wishbook = {
+        'title': title_receive,
+        'image': image_receive,
+        'desc': desc_receive,
+        'author': author_receive,
+        'price': price_receive,
+        'isbn': isbn_receive,
+        'url': url_receive,
+        'status': 'WISH'
+    }
 
-    #4. 결과 알려주기
-    return jsonify({'result': 'success', 'msg': '즐겨찾기 추가ㅆ~'})
-
+    # 3. isbn 또는 title 중복된 거 없으면 넣기
+    if isbnbooks is not None:
+        return jsonify({'result': 'success', 'msg': 'isbn 중복도서가 있습니다.', 'body': isbnbooks})
+    elif titlebooks is not None:
+        return jsonify({'result': 'success', 'msg': '타이틀 중복도서가 있습니다.', 'body': titlebooks})
+    else:
+        db.wishlist.insert_one(wishbook)
+        return jsonify({'result': 'success', 'msg': '즐겨찾기 추가했습니다'})
 
 
 # @app.route('/book', methods=['GET'])
