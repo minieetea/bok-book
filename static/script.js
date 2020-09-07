@@ -1,8 +1,4 @@
-function add_cart() {
-    //1. 책 정보를 가져오는 애를 호출하자.
-    // window.clipboardData.getData('Text');
-    // alert(clipboard);
-
+function add_cart() { // url 스크랩핑한 책 정보를 말아서 카트에 넣는다. (작업완료)
     $.ajax({
         type: "POST",
         url: "/addCart",
@@ -17,10 +13,10 @@ function add_cart() {
     })
 }
 
-function view_cart() {
+function view_cart() { // 카트 아이템 조회하기 (작업완료)
     $('#cart-list').html('');
     console.log('카트 전체 갱신 시작');
-    <!--카트 아이템 조회하기-->
+
     $.ajax({
         type: "GET",
         url: "/viewCart",
@@ -45,8 +41,8 @@ function view_cart() {
         }
     });
 }
-function clear_cart() {
-    // 임시로 가진 테이블을 모두 지운다
+
+function clear_cart() { // 임시테이블을 삭제한다. (작업완료)
     $.ajax({
         type: "POST",
         url: "/clearCart",
@@ -60,38 +56,14 @@ function clear_cart() {
 
 }
 
-function add_wishlist() {
-    <!--요소에서 각 값 가져오기-->
-    let url = $('#store-url').attr('href');
-    let title = $('#title').text();
-    let desc = $('#desc').text();
-    let author = $('#author').text();
-    let image = $('#bookcover').attr('src');
-    let price = $('#price').text();
-    let isbn = $('#isbn').text();
 
-    console.log('index.html 화면에서 추출완료===============');
-    console.log(url); // a 태그의 속성값 가져와야함
-    console.log(title);
-    console.log(desc);
-    console.log(author);
-    console.log(image); //img 태그의 속성값 가져와야함
-    console.log(price);
-    console.log(isbn);
-    <!--위시리스트에 추가하기-->
-    $.ajax({
-        type: "POST",
-        url: "/addWishlist",
-        data: {url: url, title: title, desc: desc, author: author, image: image, price: price, isbn: isbn},
-        success: function (response) { // 성공하면
-            if (response["result"] == "success") {
-                alert(response["msg"])
-            }
-        }
-    })
+function add_wishlist() { //선택한 아이템을 위시리스트로 옮겨야한다. #11
+
 }
 
 function append_horicard(title, url, desc, author, image, price, isbn) {
+    // 위시리스트에서 책 정보를 불러온 후 카드를 그린다.
+    // TODO 카드형태 합쳐야한다.
     let horicard = `<div class="card">
             <div class="row no-gutters">
                 <div class="col-md-4">
@@ -100,10 +72,9 @@ function append_horicard(title, url, desc, author, image, price, isbn) {
                 <div class="col-md-8">
                     <div class="card-body">
                         <a id="store-url" href="${url}"><h5 class="card-title" id="title">${title}</h5></a>
-                        <p id="isbn">${isbn}</p>
                         <p class="card-text"><small class="text-muted" id="author">${author}</small><small class="text-muted" id="price">${price}</small></p>
                         <p class="card-text" id="desc">${desc}</p>
-                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" name="isbn" value="${isbn}">
                           <div class="btn-group mr-2" role="group" aria-label="button group">
                             <button type="button" class="btn btn-primary"><i class="far fa-credit-card"></i> 복</button>
                             <button type="button" class="btn btn-secondary"><i class="fas fa-wallet"></i> 불복</button>
@@ -113,7 +84,6 @@ function append_horicard(title, url, desc, author, image, price, isbn) {
                           </div>
                           <div class="btn-group mr-1" role="group" aria-label="second group">
                             <button type="button" class="btn btn-light" onclick="add_wishlist()"><i class="fas fa-cart-arrow-down"></i> 나중에 사기</button>
-<!--                            <button type="button" class="btn btn-light" onclick="additemtest()"><i class="fas fa-cart-arrow-down"></i> 나중에 사기</button>-->
                           </div>
 
                           <div class="alert alert-danger" role="alert">
@@ -127,9 +97,9 @@ function append_horicard(title, url, desc, author, image, price, isbn) {
     $('#cart-list').append(horicard);
 }
 
-function my_wishlist() {
+function my_wishlist() { // 위시리스트를 조회한다.
     console.log('위시리스트 조회 시작');
-    <!--위시리스트에 전부 조회하기-->
+
     $.ajax({
         type: "GET",
         url: "/getWishlist",
@@ -154,7 +124,7 @@ function my_wishlist() {
     });
 }
 
-function remove_wishlist() {
+function remove_wishlist() { //위시리스트를 제거한다. (개선필요)
     let isbn = $('#isbn').text();
     $.ajax({
         type: "POST",
@@ -202,7 +172,7 @@ function append_horicard2(title, url, desc, author, image, price, isbn) {
     $('#book-info').append(horicard);
 }
 
-function bottomtab() {
-    $(this).addClass('active');
-    $(this).parent().children('a').not(this).removeClass('active');
-}
+// function bottomtab() {
+//     $(this).addClass('active');
+//     $(this).parent().children('a').not(this).removeClass('active');
+// }
