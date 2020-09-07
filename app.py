@@ -10,12 +10,12 @@ client = MongoClient('localhost', 27017)  # mongoDB는 27017 포트로 돌아갑
 db = client.dbsparta  # 'dbsparta'라는 이름의 db를 만들거나 사용합니다.
 
 
-## 메인페이지
+## 카트(메인페이지) web client
 @app.route('/')
 def home():
     return render_template('index.html')
 
-## 메인페이지 책 스크랩핑 API 역할을 하는 부분
+### 메인페이지 > 책 url 붙여넣기 (스크래핑 + 카트넣기) api
 @app.route('/addCart', methods=['POST'])
 def add_cart():
     # 클립보드에 있는거 불러오기
@@ -51,6 +51,7 @@ def add_cart():
     db.bookcart.insert_one(book)
     return jsonify({'result': 'success', 'msg': '카트에 담기성공'})
 
+### 카트 조회 api
 @app.route('/viewCart', methods=['GET'])
 def view_cart():
 
@@ -62,11 +63,11 @@ def view_cart():
 
     if all_bookcart is None:
         return jsonify({'result': 'success', 'msg': '카트아이템 없음'})
-    else: # 2. articles라는 키 값으로 articles 정보 보내주기
+    else:
         return jsonify({'result': 'success', 'msg': '카트 조회 API 응답', 'bookcart': all_bookcart})
 
 
-## 책을 임시로 담아두는 카트를 비우기
+### 책을 임시로 담아두는 카트를 비우기 api
 @app.route('/clearCart', methods=['POST'])
 def create_bookcart():
     db.bookcart.delete_many({})
@@ -74,70 +75,51 @@ def create_bookcart():
 
 
 
-## 위시리스트 추가 api
+### 카트에서 위시리스트로 추가하기 api
 @app.route('/addWishlist', methods=['POST'])
 def post_wishlist():
-    #1. 책 정보 받아오기
-
-    url_receive = request.form['url']
-    title_receive = request.form['title']
-    image_receive = request.form['image']
-    desc_receive = request.form['desc']
-    author_receive = request.form['author']
-    price_receive = request.form['price']
     isbn_receive = request.form['isbn']
-    print(title_receive, isbn_receive)
 
-    #2. 디비 조회해보기
-    testbooks = db.wishlist.find_one({"$or": [{'isbn': isbn_receive}, {'title': title_receive}]}, {'_id': False})
-    print('테스트:', testbooks)
+    book_from_cart = db.bookcart.find_one({'isbn': isbn_receive})
+    book_from_wishlist = db.wishlist.find_one({'isbn': isbn_receive})
 
-    wishbook = {
-        'title': title_receive,
-        'image': image_receive,
-        'desc': desc_receive,
-        'author': author_receive,
-        'price': price_receive,
-        'isbn': isbn_receive,
-        'url': url_receive,
-        'status': 'WISH',
-        'deleted': False
-    }
-
-    # 3. isbn 또는 title 중복된 거 없으면 넣기
-    if testbooks is not None:
-        return jsonify({'result': 'success', 'msg': '즐겨찾기에 중복도서가 있습니다.', 'books': testbooks})
+    if book_from_wishlist is not None:
+        return jsonify({'result': 'success', 'msg': '즐겨찾기에 중복도서 있음'})
     else:
-        db.wishlist.insert_one(wishbook)
-        return jsonify({'result': 'success', 'msg': '즐겨찾기 추가했습니다'})
+        db.wishlist.insert_one(book_from_cart)
+        return jsonify({'result': 'success', 'msg': '즐겨찾기 추가 완료'})
 
+
+## 위시리스트
+### 위시리스트 조회 web client
 @app.route('/wishlist')
 def wishlist():
     return render_template('wishlist.html')
 
-@app.route('/getWishlist', methods=['GET'])
-def read_bookmeta():
-    # 1. mongoDB에서 _id 값을 제외한 모든 데이터 조회해오기(Read)
-    all_wishlist = list(db.wishlist.find({'deleted': False}, {'_id': False}))
 
+### 위시리스트 조회 api
+@app.route('/viewWishlist', methods=['GET'])
+def read_bookmeta():
+    all_wishlist = list(db.wishlist.find({}, {'_id': False}))
     print('모든아이템: ', db.wishlist.find({}, {'_id': False}))
 
-    # 2. articles라는 키 값으로 articles 정보 보내주기
-    return jsonify({'result': 'success', 'msg': '불러왔습니다', 'wishbooks': all_wishlist})
+    return jsonify({'result': 'success', 'msg': '위시리스트 전체 조회완료', 'wishbooks': all_wishlist})
 
+### 위시리스트 제거 api
 @app.route('/removeWishlist', methods=['POST'])
 def remove_wishlist():
-    # 1. 데이터찾기
+
     isbn_receive = request.form['isbn']
-    print(isbn_receive)
+    db.wishlist.delete_one({'isbn': isbn_receive})
 
-    db.wishlist.update_many({'isbn': isbn_receive}, {'$set': {'deleted': True}})
-    result = db.wishlist.find_one({'isbn': isbn_receive})
-    print(result)
+    health_check = db.wishlist.find_one({'isbn': isbn_receive})
+    if health_check is not None:
+        return jsonify({'result': 'success', 'msg': '위시리스트에서 제거실패'})
+    else:
+        return jsonify({'result': 'success', 'msg': '위시리스트에서 제거완료'})
 
-    # 2. articles라는 키 값으로 articles 정보 보내주기
-    return jsonify({'result': 'success', 'msg': '삭제함'})
-
+## =============================================
+### 책 구매이력 조회하기
 @app.route('/isMybook', methods=['GET'])
 def is_mybook():
     #1. 책 구매이력 조회해본다.
@@ -204,4 +186,6 @@ if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
 
 
-
+### 테스트코드
+# 조건문 db.wishlist.find_one({"$or": [{'isbn': isbn_receive}, {'title': title_receive}]}, {'_id': False})
+# 업데이트 db.wishlist.update_many({'isbn': isbn_receive}, {'$set': {'deleted': True}})

@@ -58,6 +58,21 @@ function clear_cart() { // 임시테이블을 삭제한다. (작업완료)
 
 
 function add_wishlist() { //선택한 아이템을 위시리스트로 옮겨야한다. #11
+    // let temp = $('.btn-wishlist').parents()
+    // let temp2 = temp.children('.btn-toolbar') //어트리뷰트만 꺼내오면 됨
+    // let temp3 = $(this).parents()
+    // let temp4 = temp2.attr('value') //성공!!!!
+    let item_isbn = $('.btn-wishlist').parents().children('.btn-toolbar').attr('value') //합쳐봄
+    $.ajax({
+        type: "POST",
+        url: "/addWishlist",
+        data: {isbn: item_isbn},
+        success: function (response) { // 성공하면
+            if (response["result"] == "success") {
+                console.log(response["msg"])
+            }
+        }
+    })
 
 }
 
@@ -83,7 +98,7 @@ function append_horicard(title, url, desc, author, image, price, isbn) {
                             <button type="button" class="btn btn-light"><i class="fas fa-retweet"></i> 빌려보기</button>
                           </div>
                           <div class="btn-group mr-1" role="group" aria-label="second group">
-                            <button type="button" class="btn btn-light" onclick="add_wishlist()"><i class="fas fa-cart-arrow-down"></i> 나중에 사기</button>
+                            <button type="button" class="btn btn-light btn-wishlist" onclick="add_wishlist()"> <i class="fas fa-cart-arrow-down"></i> 나중에 사기</button>
                           </div>
 
                           <div class="alert alert-danger" role="alert">
@@ -102,7 +117,7 @@ function my_wishlist() { // 위시리스트를 조회한다.
 
     $.ajax({
         type: "GET",
-        url: "/getWishlist",
+        url: "/viewWishlist",
         data: {},
         success: function (response) {
             console.log(response["msg"])
