@@ -43,14 +43,17 @@
             var pastebook = document.getElementById("pastebook");
             pastebook.addEventListener('click', pasteBook, false);
         }
+
+
     </script>
 
 </head>
 
 <body>
 <!-- Image and text -->
-<nav class="navbar navbar-light bg-light" id="nav-top"></nav>
-<nav class="fixed-bottom" id="nav-bottom"></nav>
+<div class="navbar-wrapper">
+    <nav class="navbar navbar-light bg-light" id="nav-top"></nav>
+</div>
 
 <div class="wrap">
     <div class="jumbotron">
@@ -60,6 +63,9 @@
     </div>
     <div id="book-info">
     </div>
+</div>
+<div class="bottom-navbar-wrapper">
+    <nav id="nav-bottom"></nav>
 </div>
 </body>
 
