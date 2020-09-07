@@ -21,7 +21,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
             integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
             crossorigin="anonymous"></script>
-
     <!-- js, css 파일 분리-->
     <script src="/static/script.js"></script>
     <link rel="stylesheet" href="/static/bokbook.css"/>
@@ -37,33 +36,22 @@
                 $('#nav-bottom').html(data);
             });
             $("#book-info").html("");
+
+            myWishlist();
         });
-
-        window.onload = function () {
-            var pastebook = document.getElementById("pastebook");
-            pastebook.addEventListener('click', pasteBook, false);
-        }
-
-
     </script>
-
 </head>
 
 <body>
-<!-- Image and text -->
 <div class="navbar-wrapper">
     <nav class="navbar navbar-light bg-light" id="nav-top"></nav>
 </div>
 
 <div class="wrap">
-    <div class="jumbotron">
-        <h1 class="display-4">책 찾아요 진짜 찾아요</h1>
-        <p class="lead">서점이든 내책이든 어쨋든 좀 찾아봅시다</p>
-        <button type="button" class="btn btn-secondary" id="pastebook">붙여넣기</button>
-    </div>
     <div id="book-info">
     </div>
 </div>
+
 <div class="bottom-navbar-wrapper">
     <nav id="nav-bottom"></nav>
 </div>
