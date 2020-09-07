@@ -30,6 +30,12 @@
 
     <script>
         $(document).ready(function () {
+            $.get("/static/nav-top.html", function (data) {
+                $('#nav-top').html(data);
+            });
+            $.get("/static/nav-bottom.html", function (data) {
+                $('#nav-bottom').html(data);
+            });
             $("#book-info").html("");
         });
 
@@ -37,18 +43,15 @@
             var pastebook = document.getElementById("pastebook");
             pastebook.addEventListener('click', pasteBook, false);
         }
-
     </script>
 
 </head>
 
 <body>
 <!-- Image and text -->
-<nav class="navbar navbar-light bg-light">
-    <a class="navbar-brand" href="#" style="font-family: 'Hanna', sans-serif">
-        <img src="/static/icon_bok.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
-        서재복불복</a>
-</nav>
+<nav class="navbar navbar-light bg-light" id="nav-top"></nav>
+<nav class="fixed-bottom" id="nav-bottom"></nav>
+
 <div class="wrap">
     <div class="jumbotron">
         <h1 class="display-4">책 찾아요 진짜 찾아요</h1>
@@ -58,23 +61,6 @@
     <div id="book-info">
     </div>
 </div>
-<nav class="fixed-bottom">
-    <ul class="nav nav-pills nav-fill">
-        <li class="nav-item">
-            <a class="nav-link active" href="/">책추가</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/wishlist">위시리스트</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">내책보기</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
-    </ul>
-</nav>
-
 </body>
 
 </html>

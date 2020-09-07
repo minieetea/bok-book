@@ -26,9 +26,17 @@
     <link rel="stylesheet" href="/static/bokbook.css"/>
 
     <title>복불복</title>
+
     <script>
         $(document).ready(function () {
+            $.get("/static/nav-top.html", function (data) {
+                $('#nav-top').html(data);
+            });
+            $.get("/static/nav-bottom.html", function (data) {
+                $('#nav-bottom').html(data);
+            });
             $("#book-info").html("");
+
             myWishlist();
         });
 
@@ -111,11 +119,10 @@
 </head>
 
 <body>
+<nav class="navbar navbar-light bg-light" id="nav-top"></nav>
+<nav class="fixed-bottom" id="nav-bottom"></nav>
+
 <div class="wrap">
-    <div class="jumbotron">
-        <h1 class="display-4">위시리스트</h1>
-        <p class="lead">서점이든 내책이든 어쨋든 좀 찾아봅시다</p>
-    </div>
     <div id="book-info">
         왜 안나오지?
     </div>
