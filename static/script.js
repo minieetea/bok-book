@@ -1,34 +1,66 @@
-function pasteBook() {
+function add_cart() {
     //1. 책 정보를 가져오는 애를 호출하자.
     // window.clipboardData.getData('Text');
     // alert(clipboard);
 
     $.ajax({
         type: "POST",
-        url: "/pastebook",
+        url: "/addCart",
         data: {},
         success: function (response) { // 성공하면
             if (response["result"] == "success") {
-                let info = response["bookinfo"];
-                console.log(info);
-                let title = info['title'];
-                let url = info['url'];
-                let desc = info['desc'];
-                let author = info['author'];
-                let image = info['image'];
-                let price = info['price'];
-                let isbn = info['isbn'];
-                // let ebook_price = info['ebook_price'];
-                // if(ebook_price>0)
-                //     scrapingResult(title, url, desc, author, image, price, ebook_price);
-                // else
-                appendHoricard(title, url, desc, author, image, price, isbn);
-            }
+                console.log("카트에 도서 추가 완료");
+                view_cart();
+            } else
+                console.log("!!! 카트에 도서 추가 실패")
         }
     })
 }
 
-function addWishlist() {
+function view_cart() {
+    $('#cart-list').html('');
+    console.log('카트 전체 갱신 시작');
+    <!--카트 아이템 조회하기-->
+    $.ajax({
+        type: "GET",
+        url: "/viewCart",
+        data: {},
+        success: function (response) {
+            if (response["result"] == "success") {
+                console.log(response["msg"])
+                console.log("카트 조회 성공");
+                let bookcart = response["bookcart"]
+                for (let i = 0; i < bookcart.length; i++) {
+                    let title = bookcart[i]['title'];
+                    let desc = bookcart[i]['desc'];
+                    let image = bookcart[i]['image'];
+                    let url = bookcart[i]['url'];
+                    let author = bookcart[i]['author'];
+                    let price = bookcart[i]['price'];
+                    let isbn = bookcart[i]['isbn'];
+                    console.log("카트아이템:", title, desc, image, url, author, price, isbn)
+                    append_horicard(title, url, desc, author, image, price, isbn);
+                }
+            }
+        }
+    });
+}
+function clear_cart() {
+    // 임시로 가진 테이블을 모두 지운다
+    $.ajax({
+        type: "POST",
+        url: "/clearCart",
+        data: {},
+        success: function (response) { // 성공하면
+            if (response["result"] == "success") {
+                console.log(response["msg"])
+            }
+        }
+    })
+
+}
+
+function add_wishlist() {
     <!--요소에서 각 값 가져오기-->
     let url = $('#store-url').attr('href');
     let title = $('#title').text();
@@ -59,7 +91,7 @@ function addWishlist() {
     })
 }
 
-function appendHoricard(title, url, desc, author, image, price, isbn) {
+function append_horicard(title, url, desc, author, image, price, isbn) {
     let horicard = `<div class="card">
             <div class="row no-gutters">
                 <div class="col-md-4">
@@ -80,7 +112,8 @@ function appendHoricard(title, url, desc, author, image, price, isbn) {
                             <button type="button" class="btn btn-light"><i class="fas fa-retweet"></i> 빌려보기</button>
                           </div>
                           <div class="btn-group mr-1" role="group" aria-label="second group">
-                            <button type="button" class="btn btn-light" onclick="addWishlist()"><i class="fas fa-cart-arrow-down"></i> 나중에 사기</button>
+                            <button type="button" class="btn btn-light" onclick="add_wishlist()"><i class="fas fa-cart-arrow-down"></i> 나중에 사기</button>
+<!--                            <button type="button" class="btn btn-light" onclick="additemtest()"><i class="fas fa-cart-arrow-down"></i> 나중에 사기</button>-->
                           </div>
 
                           <div class="alert alert-danger" role="alert">
@@ -91,10 +124,10 @@ function appendHoricard(title, url, desc, author, image, price, isbn) {
                 </div>
             </div>
         </div>`
-    $('#book-info').append(horicard);
+    $('#cart-list').append(horicard);
 }
 
-function myWishlist() {
+function my_wishlist() {
     console.log('위시리스트 조회 시작');
     <!--위시리스트에 전부 조회하기-->
     $.ajax({
@@ -104,7 +137,7 @@ function myWishlist() {
         success: function (response) {
             console.log(response["msg"])
             if (response["result"] == "success") {
-                console.log("왓다");
+                console.log("위시리스트 조회 성공");
                 let wishlist = response["wishbooks"]
                 for (let i = 0; i < wishlist.length; i++) {
                     let title = wishlist[i]['title'];
@@ -114,14 +147,14 @@ function myWishlist() {
                     let author = wishlist[i]['author'];
                     let price = wishlist[i]['price'];
                     let isbn = wishlist[i]['isbn'];
-                    appendHoricard2(title, url, desc, author, image, price, isbn);
+                    append_horicard2(title, url, desc, author, image, price, isbn);
                 }
             }
         }
     });
 }
 
-function removeWishlist() {
+function remove_wishlist() {
     let isbn = $('#isbn').text();
     $.ajax({
         type: "POST",
@@ -129,13 +162,13 @@ function removeWishlist() {
         data: {isbn: isbn},
         success: function (response) { // 성공하면
             if (response["result"] == "success")
-                console.log("지웠다");
+                console.log("위시리스트 아이템 삭제 성공");
             window.location.reload();
         }
     })
 }
 
-function appendHoricard2(title, url, desc, author, image, price, isbn) {
+function append_horicard2(title, url, desc, author, image, price, isbn) {
     let horicard = `<div class="card">
             <div class="row no-gutters">
                 <div class="col-md-4">
@@ -156,7 +189,7 @@ function appendHoricard2(title, url, desc, author, image, price, isbn) {
                             <button type="button" class="btn btn-light"><i class="fas fa-retweet"></i> 빌려보기</button>
                           </div>
                           <div class="btn-group mr-1" role="group" aria-label="second group">
-                            <button type="button" class="btn btn-danger" onclick="removeWishlist()"><i class="fas fa-minus-circle"></i> 마음이 바뀜</button>
+                            <button type="button" class="btn btn-danger" onclick="remove_wishlist()"><i class="fas fa-minus-circle"></i> 마음이 바뀜</button>
                           </div>
                           <div class="alert alert-danger" role="alert">
                               <i class="fas fa-exclamation-triangle"> </i><a href="#" class="alert-link">보유 중인 책(복)</a>입니다. 사기전에 다시 생각하세요.
