@@ -140,11 +140,11 @@ function my_wishlist() { // 위시리스트를 조회한다.
 }
 
 function remove_wishlist() { //위시리스트를 제거한다. (개선필요)
-    let isbn = $('#isbn').text();
+    let item_isbn = $('.btn-wishlist').parents().children('.btn-toolbar').attr('value')
     $.ajax({
         type: "POST",
         url: "/removeWishlist",
-        data: {isbn: isbn},
+        data: {isbn: item_isbn},
         success: function (response) { // 성공하면
             if (response["result"] == "success")
                 console.log("위시리스트 아이템 삭제 성공");
