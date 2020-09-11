@@ -41,7 +41,35 @@ function add_wishlist() { //선택한 아이템을 위시리스트로 옮겨야�
     })
 }
 
-function my_books() { // 위시리스트를 조회한다.
+function now_reading_books() { // 읽는 책을 조회한다.
+    console.log('지금 읽는 책 조회 시작');
+
+    $.ajax({
+        type: "GET",
+        url: "/viewMyReadBooks",
+        data: {},
+        success: function (response) {
+            console.log(response["msg"])
+            if (response["result"] == "success") {
+                console.log("내 서재 조회 성공");
+                let wishlist = response["mybooks"]
+                for (let i = 0; i < wishlist.length; i++) {
+                    let title = wishlist[i]['title'];
+                    let desc = wishlist[i]['desc'];
+                    let image = wishlist[i]['image'];
+                    let url = wishlist[i]['url'];
+                    let author = wishlist[i]['author'];
+                    let price = wishlist[i]['price'];
+                    let isbn = wishlist[i]['isbn'];
+                    append_vercard(title, url, desc, author, image, price, isbn);
+                    // append_mybooks(title, url, desc, author, image, price, isbn)
+                }
+            }
+        }
+    });
+}
+
+function my_books() { // 전체 도서를 조회한다.
     console.log('내 서재 조회 시작');
 
     $.ajax({
@@ -61,7 +89,8 @@ function my_books() { // 위시리스트를 조회한다.
                     let author = wishlist[i]['author'];
                     let price = wishlist[i]['price'];
                     let isbn = wishlist[i]['isbn'];
-                    append_vercard(title, url, desc, author, image, price, isbn);
+                    // append_vercard(title, url, desc, author, image, price, isbn);
+                    append_mybooks(title, url, desc, author, image, price, isbn)
                 }
             }
         }
@@ -135,10 +164,10 @@ function append_vercard(title, url, desc, author, image, price, isbn) {
     $('#book-info').append(vercard);
 }
 
-function append_vercard_wish(title, url, desc, author, image, price, isbn) {
+function append_vercard_wish(url, image, isbn) {
     let vercard =
         `     <div class="reading-book-card">
-                    <img src="${image}" class="card-img-top" alt="...">
+                    <img src="${image}" class="card-img-top">
                     <div class="card-footer">
                       <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic example">
                           <button type="button" class="text-button left" onclick="buy_mybook(${isbn})">구입완료</button>
@@ -147,4 +176,17 @@ function append_vercard_wish(title, url, desc, author, image, price, isbn) {
                      </div>
                   </div>`
     $('#wish-info').append(vercard);
+}
+
+function append_mybooks(title, url, desc, author, image, price, isbn) {
+    let tablerow =
+        `<tr>
+                    <th scope="row">1</th>
+                    <td><a href="${url}">${title}</a></td>
+                    <td>${author}</td>
+                    <td>${price}</td>
+                    <td>${isbn}</td>
+                    <td>${title}</td>
+        </tr>`
+    $('#mybook-list').append(tablerow);
 }
