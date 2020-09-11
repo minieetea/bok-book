@@ -108,8 +108,8 @@ def read_bookmeta():
 ### 위시리스트 제거 api
 @app.route('/removeWishlist', methods=['POST'])
 def remove_wishlist():
-
     isbn_receive = request.form['isbn']
+    print("제거할 도서 : ", isbn_receive)
     db.wishlist.delete_one({'isbn': isbn_receive})
 
     health_check = db.wishlist.find_one({'isbn': isbn_receive})
@@ -140,38 +140,44 @@ def is_mybook():
     else:
         return jsonify({'result': 'success', 'msg': '구매이력이 없습니다.'})
 
-@app.route('/addMybook', methods=['GET'])
-def check_mybook():
-    # let isbn
-    book_condition = {
-        # 'isbn':
-        # 'pay_type':
-        # 'status':
-    }
-
-    return jsonify({'result': 'success', 'msg': '도서목록에 있음', 'condition': book_condition})
+# @app.route('/addMybook', methods=['GET'])
+# def check_mybook():
+#     # let isbn
+#     book_condition = {
+#         # 'isbn':
+#         # 'pay_type':
+#         # 'status':
+#     }
+#
+#     return jsonify({'result': 'success', 'msg': '도서목록에 있음', 'condition': book_condition})
 
 
 @app.route('/addMybook', methods=['POST'])
 def add_mybook():
 
     #책 메타정보로부터 가져온 기본정보
-    url_receive = request.form['url']
-    image_receive = request.form['image']
-    desc_receive = request.form['desc']
-    author_receive = request.form['author']
-    price_receive = request.form['price']
-
-    #키값
-    isbn_receive = request.form['isbn']
-    title_receive = request.form['title']
-
-    #사용자로부터 입력받은 정보
-    book_type_receive = request.form['book_type'] #hardcover, digital
-    pay_type_receive = request.form['pay_type'] #bok, cash, rent
-    buy_store_type_receive = request.form['store_type'] #online, offline
-    buy_store_receive = request.form['buy_store'] #yes24, kyobo, ridibooks
-    buy_date_receive = request.form['date'] #yyyy-mm-dd
+    #wish 리스트의 상태를 업데이트하고, 키를 받아 소장정보를 생성한다.
+    wishbook = db.wishlist.find({'isbn': isbn_receive})
+    print(wishbook)
+    #
+    # isbn_receive = request.form['isbn']
+    #
+    # url_receive = request.form['url']
+    # image_receive = request.form['image']
+    # desc_receive = request.form['desc']
+    # author_receive = request.form['author']
+    # price_receive = request.form['price']
+    #
+    # #키값
+    # isbn_receive = request.form['isbn']
+    # title_receive = request.form['title']
+    #
+    # #사용자로부터 입력받은 정보
+    # book_type_receive = request.form['book_type'] #hardcover, digital
+    # pay_type_receive = request.form['pay_type'] #bok, cash, rent
+    # buy_store_type_receive = request.form['store_type'] #online, offline
+    # buy_store_receive = request.form['buy_store'] #yes24, kyobo, ridibooks
+    # buy_date_receive = request.form['date'] #yyyy-mm-dd
 
     # status = hold
 
