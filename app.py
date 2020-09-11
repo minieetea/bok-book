@@ -10,14 +10,98 @@ client = MongoClient('localhost', 27017)  # mongoDB는 27017 포트로 돌아갑
 db = client.dbsparta  # 'dbsparta'라는 이름의 db를 만들거나 사용합니다.
 
 
-## 카트(메인페이지) web client
-@app.route('/')
-def home():
-    return render_template('index.html')
+# ## 카트(메인페이지) web client
+# @app.route('/')
+# def home():
+#     return render_template('index.html')
+#
+# ### 메인페이지 > 책 url 붙여넣기 (스크래핑 + 카트넣기) api
+# @app.route('/addCart', methods=['POST'])
+# def add_cart():
+#     # 클립보드에 있는거 불러오기
+#     url = clipboard.paste()
+#     print("주소복사완료:", url)
+#
+#     # 메타태그 스크랩핑하기
+#     headers = {
+#         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
+#     data = requests.get(url, headers=headers)
+#
+#     soup = BeautifulSoup(data.text, 'html.parser')
+#
+#     og_image = soup.select_one('meta[property="og:image"]')['content']
+#     og_title = soup.select_one('meta[property="og:title"]')['content']
+#     og_author = soup.select_one('meta[name="author"]')['content']
+#     og_description = soup.select_one('meta[property="og:description"]')['content']
+#     price = soup.select_one('.nor_price > em').text
+#     isbn = soup.select_one('meta[property="books:isbn"]')['content']
+#
+#     print('Yes24 도서상세 조회완료:')
+#     print(og_image, og_title, og_author, og_description, price, isbn)
+#
+#     book = {
+#         "url": url,
+#         "image": og_image,
+#         "title": og_title,
+#         "author": og_author,
+#         "desc": og_description,
+#         "price": price,
+#         "isbn": isbn
+#     }
+#     db.bookcart.insert_one(book)
+#     return jsonify({'result': 'success', 'msg': '카트에 담기성공'})
 
-### 메인페이지 > 책 url 붙여넣기 (스크래핑 + 카트넣기) api
-@app.route('/addCart', methods=['POST'])
-def add_cart():
+### 내서재 조회 web client
+@app.route('/')
+def mybooks():
+    return render_template('index.html')
+# 내서재 추가
+@app.route('/addMybook', methods=['POST'])
+def addMybook():
+    # 클립보드에 있는거 불러오기
+    url = clipboard.paste()
+    print("주소복사완료:", url)
+
+    # 메타태그 스크랩핑하기
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
+    data = requests.get(url, headers=headers)
+
+    soup = BeautifulSoup(data.text, 'html.parser')
+
+    og_image = soup.select_one('meta[property="og:image"]')['content']
+    og_title = soup.select_one('meta[property="og:title"]')['content']
+    og_author = soup.select_one('meta[name="author"]')['content']
+    og_description = soup.select_one('meta[property="og:description"]')['content']
+    price = soup.select_one('.nor_price > em').text
+    isbn = soup.select_one('meta[property="books:isbn"]')['content']
+
+    print('Yes24 도서상세 조회완료:')
+    print(og_image, og_title, og_author, og_description, price, isbn)
+
+    book = {
+        "url": url,
+        "image": og_image,
+        "title": og_title,
+        "author": og_author,
+        "desc": og_description,
+        "price": price,
+        "isbn": isbn,
+        "status": "BUY",
+        "progress": "0"
+    }
+
+    sr = db.mybook.find_one({'isbn': isbn})
+    if sr is None:
+        db.mybook.insert_one(book)
+        return jsonify({'result': 'success', 'msg': '내 서재 추가 성공'})
+    else:
+        return jsonify({'result': 'success', 'msg': '중복도서가 있습니다'})
+
+
+# 위시리스트 추가 api
+@app.route('/addWishlist', methods=['POST'])
+def add_wishlist():
     # 클립보드에 있는거 불러오기
     url = clipboard.paste()
     print("주소복사완료:", url)
@@ -48,54 +132,13 @@ def add_cart():
         "price": price,
         "isbn": isbn
     }
-    db.bookcart.insert_one(book)
-    return jsonify({'result': 'success', 'msg': '카트에 담기성공'})
 
-### 카트 조회 api
-@app.route('/viewCart', methods=['GET'])
-def view_cart():
-
-    all_bookcart = list(db.bookcart.find({}, {'_id': False}))
-
-    print('모든아이템 개수:', len(all_bookcart))
-    print('모든아이템: ', db.bookcart.find({}, {'_id': False}))
-
-
-    if all_bookcart is None:
-        return jsonify({'result': 'success', 'msg': '카트아이템 없음'})
+    sr = db.wishlist.find_one({'isbn': isbn})
+    if sr is None:
+        db.wishlist.insert_one(book)
+        return jsonify({'result': 'success', 'msg': '위시리스트 추가 성공'})
     else:
-        return jsonify({'result': 'success', 'msg': '카트 조회 API 응답', 'bookcart': all_bookcart})
-
-
-### 책을 임시로 담아두는 카트를 비우기 api
-@app.route('/clearCart', methods=['POST'])
-def create_bookcart():
-    db.bookcart.delete_many({})
-    return jsonify({'result': 'success', 'msg': '카트에 비우기 성공'})
-
-
-
-### 카트에서 위시리스트로 추가하기 api
-@app.route('/addWishlist', methods=['POST'])
-def post_wishlist():
-    isbn_receive = request.form['isbn']
-
-    book_from_cart = db.bookcart.find_one({'isbn': isbn_receive})
-    book_from_wishlist = db.wishlist.find_one({'isbn': isbn_receive})
-
-    if book_from_wishlist is not None:
-        return jsonify({'result': 'success', 'msg': '즐겨찾기에 중복도서 있음'})
-    else:
-        db.wishlist.insert_one(book_from_cart)
-        return jsonify({'result': 'success', 'msg': '즐겨찾기 추가 완료'})
-
-
-## 위시리스트
-### 위시리스트 조회 web client
-@app.route('/wishlist')
-def wishlist():
-    return render_template('wishlist.html')
-
+        return jsonify({'result': 'success', 'msg': '중복도서가 있습니다'})
 
 ### 위시리스트 조회 api
 @app.route('/viewWishlist', methods=['GET'])
@@ -119,73 +162,35 @@ def remove_wishlist():
         return jsonify({'result': 'success', 'msg': '위시리스트에서 제거완료'})
 
 ## =============================================
-### 책 구매이력 조회하기
-@app.route('/isMybook', methods=['GET'])
-def is_mybook():
-    #1. 책 구매이력 조회해본다.
+@app.route('/buyMybook', methods=['POST'])
+def buy_mybook():
     isbn_receive = request.form['isbn']
-    title_receive = request.form['title']
-    # isbnbooks = db.wishlist.find_one({'isbn': isbn_receive}, {'_id': False})
-    # titlebooks = db.wishlist.find_one({'title': title_receive}, {'_id': False})
-    # db.wishlist.find({ $or: [ { 'isbn': isbn_receive }, { 'title': title_receive } ] })
-    # book_condition = {
-    #     'pay_type': isbnbooks.isbn
-    #     'status':isbnbooks
-    # }
+    print("위시리스트에서 사려고 함:", isbn_receive)
+    # wish 리스트의 상태를 업데이트하고, 책정보를 받아 소장상태로 변경한다.
+    # 위시리스트에서 소장하는 경우 : 위시리스트에서 제거, 소장도서 목록에 추가
+    wishbook = db.wishlist.find_one({"isbn": isbn_receive})
+    mybook = db.mybook.find_one({"isbn": isbn_receive})
 
-    if isbnbooks is not None:
-        return jsonify({'result': 'success', 'msg': 'isbn 중복도서가 있습니다.', 'body': isbnbooks})
-    elif titlebooks is not None:
-        return jsonify({'result': 'success', 'msg': '타이틀 중복도서가 있습니다.', 'body': titlebooks})
-    else:
-        return jsonify({'result': 'success', 'msg': '구매이력이 없습니다.'})
-
-# @app.route('/addMybook', methods=['GET'])
-# def check_mybook():
-#     # let isbn
-#     book_condition = {
-#         # 'isbn':
-#         # 'pay_type':
-#         # 'status':
-#     }
-#
-#     return jsonify({'result': 'success', 'msg': '도서목록에 있음', 'condition': book_condition})
+    if mybook is not None: #내 서재에 이미 있으면
+        db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
+        return jsonify({'result': 'success', 'msg': '소장도서'})
+    else: #내 서재에 없으면 구입가능
+        if wishbook is not None: #위시리스트에 있으면
+            db.mybook.insert_one(wishbook)  # 서제에 추가
+            db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
+            return jsonify({'result': 'success', 'msg': '도서구매 완료'})
+        else:
+            return jsonify({'result': 'success', 'msg': '위시리스트에 존재하지 않음'})
 
 
-@app.route('/addMybook', methods=['POST'])
-def add_mybook():
 
-    #책 메타정보로부터 가져온 기본정보
-    #wish 리스트의 상태를 업데이트하고, 키를 받아 소장정보를 생성한다.
-    wishbook = db.wishlist.find({'isbn': isbn_receive})
-    print(wishbook)
-    #
-    # isbn_receive = request.form['isbn']
-    #
-    # url_receive = request.form['url']
-    # image_receive = request.form['image']
-    # desc_receive = request.form['desc']
-    # author_receive = request.form['author']
-    # price_receive = request.form['price']
-    #
-    # #키값
-    # isbn_receive = request.form['isbn']
-    # title_receive = request.form['title']
-    #
-    # #사용자로부터 입력받은 정보
-    # book_type_receive = request.form['book_type'] #hardcover, digital
-    # pay_type_receive = request.form['pay_type'] #bok, cash, rent
-    # buy_store_type_receive = request.form['store_type'] #online, offline
-    # buy_store_receive = request.form['buy_store'] #yes24, kyobo, ridibooks
-    # buy_date_receive = request.form['date'] #yyyy-mm-dd
+### 내 서재 조회
+@app.route('/viewMybooks', methods=['GET'])
+def read_mybook_meta():
+    all_mybook = list(db.mybook.find({}, {'_id': False}))
+    print('모든아이템: ', db.mybook.find({}, {'_id': False}))
 
-    # status = hold
-
-    #
-    # 위시리스트에 같은 책이 있으면 제거한다.
-    return jsonify({'result': 'success', 'msg': '도서를 샀음!'})
-
-# @app.route('/deleteMybook', methods=['POST'])
+    return jsonify({'result': 'success', 'msg': '내 도서 전체 조회완료', 'mybooks': all_mybook})
 
 
 if __name__ == '__main__':

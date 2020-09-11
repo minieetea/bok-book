@@ -40,3 +40,66 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .nav-pills .nav-link {
     border-radius: 0rem;
 }
+
+.reading-book-card {
+    max-width: 20%;
+    margin: 1rem;
+}
+
+.card-img-top .badge {
+    width: 100%;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+.badge {
+    z-index: 10;
+}
+
+.section-nav {
+    padding: 10px;
+    text-underline-position: auto;
+    border-color: black;
+    border-bottom: solid;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.list-group {
+    float: left;
+}
+
+.list-items {
+    display: inline-flex;
+}
+
+.progress {
+    background-color: #e9ecef;
+    border-radius: 0rem;
+}
+
+.progress-bar {
+    background-color: #40454a;
+}
+
+.text-button {
+    border: none;
+    background: #ffffff00;
+    padding: .2rem .5rem;
+    color: #c5c5c5;
+    font-weight: 100;
+}
+
+.card-footer {
+    padding: 0px;
+    background-color: rgba(0, 0, 0, .03);
+    border-top: 1px solid rgba(0, 0, 0, .125);
+
+}
+
+.card-footer:last-child {
+    border-radius: 0rem 0rem .8rem .8rem;
+    border: solid #212529;
+    background: #212529;
+
+}
