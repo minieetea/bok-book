@@ -77,6 +77,7 @@ function my_books(query) { // 전체 도서를 조회한다.
             if (response["result"] == "success") {
                 console.log("내 서재 조회 성공");
                 let book = response["mybooks"]
+                $('#mybook-list').html("")
                 for (let i = 0; i < book.length; i++) {
                     let title = book[i]['title'];
                     let url = book[i]['url'];
@@ -217,7 +218,7 @@ function get_categories() { // 읽는 책을 조회한다.
                 let count = category[i]['count'];
                 console.log(category[i], name, count)
 
-                let listrow = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                let listrow = `<li class="list-group-item d-flex justify-content-between align-items-center" onclick="my_books(encodeURI('${name}'))">
                                     ${name}
                                     <span class="badge badge-primary badge-pill">${count}</span>
                                 </li>`

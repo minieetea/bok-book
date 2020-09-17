@@ -118,7 +118,7 @@ def read_bookmeta():
 def all_mybook_meta():
     print('카테고리: ', request.args.get('ct'))
     ct = request.args.get('ct')
-    all_mybook = list(db.mybook.find({'title': {'$regex': ct}, 'status': {"$ne": 'DELETED'}}, {'_id': False})) #삭제된 것은 리스트에서 미노출된다.
+    all_mybook = list(db.mybook.find({'category': {'$regex': ct}, 'status': {"$ne": 'DELETED'}}, {'_id': False})) #삭제된 것은 리스트에서 미노출된다.
     print('내서재 모든아이템: ', all_mybook)
     return jsonify({'result': 'success', 'msg': '내 도서 전체 조회완료', 'mybooks': all_mybook})
 
