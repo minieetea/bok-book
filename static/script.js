@@ -11,14 +11,10 @@ function my_wishlist() { // 위시리스트를 조회한다.
                 console.log("위시리스트 조회 성공");
                 let wishlist = response["wishbooks"]
                 for (let i = 0; i < wishlist.length; i++) {
-                    let title = wishlist[i]['title'];
-                    let desc = wishlist[i]['desc'];
                     let image = wishlist[i]['image'];
                     let url = wishlist[i]['url'];
-                    let author = wishlist[i]['author'];
-                    let price = wishlist[i]['price'];
                     let isbn = wishlist[i]['isbn'];
-                    append_vercard_wish(title, url, desc, author, image, price, isbn);
+                    append_vercard_wish(url, image, isbn);
                 }
             }
         }
@@ -62,35 +58,33 @@ function now_reading_books() { // 읽는 책을 조회한다.
                     let price = wishlist[i]['price'];
                     let isbn = wishlist[i]['isbn'];
                     append_vercard(title, url, desc, author, image, price, isbn);
-                    // append_mybooks(title, url, desc, author, image, price, isbn)
                 }
             }
         }
     });
 }
 
-function my_books() { // 전체 도서를 조회한다.
+function my_books(query) { // 전체 도서를 조회한다.
     console.log('내 서재 조회 시작');
+    console.log("요청주소: /viewMybooks" + "?ct=" + query)
 
     $.ajax({
         type: "GET",
-        url: "/viewMybooks",
+        url: "/viewMybooks" + "?ct=" + query,
         data: {},
         success: function (response) {
             console.log(response["msg"])
             if (response["result"] == "success") {
                 console.log("내 서재 조회 성공");
-                let wishlist = response["mybooks"]
-                for (let i = 0; i < wishlist.length; i++) {
-                    let title = wishlist[i]['title'];
-                    let desc = wishlist[i]['desc'];
-                    let image = wishlist[i]['image'];
-                    let url = wishlist[i]['url'];
-                    let author = wishlist[i]['author'];
-                    let price = wishlist[i]['price'];
-                    let isbn = wishlist[i]['isbn'];
-                    // append_vercard(title, url, desc, author, image, price, isbn);
-                    append_mybooks(title, url, desc, author, image, price, isbn)
+                let book = response["mybooks"]
+                for (let i = 0; i < book.length; i++) {
+                    let title = book[i]['title'];
+                    let url = book[i]['url'];
+                    let author = book[i]['author'];
+                    let isbn = book[i]['isbn'];
+                    let status = book[i]['status'];
+                    let progress = book[i]['progress'];
+                    append_mybooks(i + 1, title, url, author, status, progress, isbn);
                 }
             }
         }
@@ -108,7 +102,7 @@ function remove_wishlist(item) { //위시리스트를 제거한다. (개선필�
             if (response["result"] == "success")
                 console.log("위시리스트 아이템 삭제 성공");
             else
-                console.log("왠지 모르지만 실패")
+                console.log("왠지 모르지만 실패");
             $("#wish-info").html("");
             my_wishlist();
         }
@@ -117,7 +111,7 @@ function remove_wishlist(item) { //위시리스트를 제거한다. (개선필�
 
 function buy_mybook(item) { //위시리스트에 넣어둔 책을 사려고한다.
     let item_isbn = item
-    console.log("사려고 함:", item)
+    console.log("사려고 함:", item);
 
     $.ajax({
         type: "POST",
@@ -125,7 +119,7 @@ function buy_mybook(item) { //위시리스트에 넣어둔 책을 사려고한�
         data: {isbn: item_isbn},
         success: function (response) { // 성공하면
             if (response["result"] == "success") {
-                console.log(response["msg"])
+                console.log(response["msg"]);
                 $("#wish-info").html("");
                 my_wishlist();
             }
@@ -147,7 +141,7 @@ function add_mybook() { //바로 책에 추가한다.
     })
 }
 
-function append_vercard(title, url, desc, author, image, price, isbn) {
+function append_vercard(title, url, desc, author, image, isbn) {
     let vercard =
         `     <div class="reading-book-card">
                     <div class="progress">
@@ -156,8 +150,9 @@ function append_vercard(title, url, desc, author, image, price, isbn) {
                     <img src="${image}" class="card-img-top" alt="...">
                     <div class="card-footer">
                       <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic example">
-                          <button type="button" class="text-button left" onclick="alert('test')">펼치기</button>
-                          <button type="button" class="text-button right" onclick="alert('test')">덮어두기</button>
+                          <button type="button" class="text-button left" onclick="alert(${isbn})">읽기</button>
+                          <button type="button" class="text-button right" onclick="alert(${isbn})">멈추기</button>
+                          <button type="button" class="text-button right" onclick="alert(${isbn})">완료</button>
                         </div>
                      </div>
                   </div>`
@@ -178,15 +173,56 @@ function append_vercard_wish(url, image, isbn) {
     $('#wish-info').append(vercard);
 }
 
-function append_mybooks(title, url, desc, author, image, price, isbn) {
+function append_mybooks(i, title, url, author, status, progress, isbn) {
     let tablerow =
         `<tr>
-                    <th scope="row">1</th>
+                    <th scope="row">${i}</th>
                     <td><a href="${url}">${title}</a></td>
                     <td>${author}</td>
-                    <td>${price}</td>
-                    <td>${isbn}</td>
-                    <td>${title}</td>
+                    <td>${progress}</td>
+                    <td>${status}</td>
+                    <td><button type="button" value="${isbn}">업데이트</button></td>
         </tr>`
     $('#mybook-list').append(tablerow);
+}
+
+function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+    }
+}
+
+function get_categories() { // 읽는 책을 조회한다.
+    console.log('내서재 카테고리들 조회시작');
+
+    $.ajax({
+        type: "GET",
+        url: "/getCategories",
+        data: {},
+        success: function (response) {
+            console.log(response["msg"])
+            let category = response["categories"]
+            console.log(category)
+            for (let i = 0; i < category.length; i++) {
+                let name = category[i]['name'];
+                let count = category[i]['count'];
+                console.log(category[i], name, count)
+
+                let listrow = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${name}
+                                    <span class="badge badge-primary badge-pill">${count}</span>
+                                </li>`
+                $('#category-group').append(listrow);
+            }
+        }
+    });
 }

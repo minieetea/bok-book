@@ -46,7 +46,8 @@ def addMybook():
         "price": price,
         "isbn": isbn,
         "status": "READY",
-        "progress": "0"
+        "progress": "0",
+        "category": "미분류"
     }
 
     sr = db.mybook.find_one({'isbn': isbn})
@@ -115,7 +116,9 @@ def read_bookmeta():
 ### 내 서재 조회
 @app.route('/viewMybooks', methods=['GET'])
 def all_mybook_meta():
-    all_mybook = list(db.mybook.find({'status': {"$ne": 'DELETED'}}, {'_id': False})) #삭제된 것은 리스트에서 미노출된다.
+    print('카테고리: ', request.args.get('ct'))
+    ct = request.args.get('ct')
+    all_mybook = list(db.mybook.find({'title': {'$regex': ct}, 'status': {"$ne": 'DELETED'}}, {'_id': False})) #삭제된 것은 리스트에서 미노출된다.
     print('내서재 모든아이템: ', all_mybook)
     return jsonify({'result': 'success', 'msg': '내 도서 전체 조회완료', 'mybooks': all_mybook})
 
@@ -149,12 +152,25 @@ def buy_mybook():
     else: #내 서재에 없으면 구입가능
         if wishbook is not None: #위시리스트에 있으면
             db.mybook.insert_one(wishbook)  # 서재에 추가
-            db.mybook.update({'isbn': isbn_receive}, {"$set": {"status": "READY", "progress": "0"}}, upsert=False)
+            db.mybook.update({'isbn': isbn_receive}, {"$set": {"status": "READY", "progress": "0", "category": "미분류"}}, upsert=False)
             db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
             return jsonify({'result': 'success', 'msg': '도서구매 완료'})
         else:
             return jsonify({'result': 'success', 'msg': '위시리스트에 존재하지 않음'})
 
+
+@app.route('/getCategories', methods=['GET'])
+def get_categories():
+    categories = list(db.mybook.distinct('category'))
+    for ct in categories:
+        cnt = db.mybook.count_documents({'category': ct})
+        print(cnt)
+        db.category.update_one({'name': ct}, {'$set': {'count': cnt}}, upsert=True)
+
+    all_category = list(db.category.find({}, {'_id': False}))
+    print('내서재 카테고리들: ', all_category)
+
+    return jsonify({'result': 'success', 'msg': '카테고리 조회완료', 'categories': all_category})
 
 
 if __name__ == '__main__':
