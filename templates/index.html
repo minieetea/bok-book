@@ -50,6 +50,8 @@
             my_books();
             get_categories();
         });
+
+
     </script>
 </head>
 
@@ -60,7 +62,7 @@
 
 <div class="container">
     <div class="input-group">
-        <input type="text" class="form-control" aria-label="Text input with segmented dropdown button" id="url-input-box">
+        <input type="text" class="form-control" placeholder="복사한 URL을 넣어주세요." id="url-input-box">
         <div class="input-group-append">
             <button type="button" class="btn btn-outline-secondary" onclick="add_wishlist()">담기</button>
             <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
@@ -71,7 +73,7 @@
                 <a class="dropdown-item" onclick="add_wishlist()">담기</a>
                 <a class="dropdown-item" onclick="add_mybook()">바로 저장하기</a>
                 <div role="separator" class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">지우기</a>
+                <a class="dropdown-item" onclick="clear_input_url()">지우기</a>
             </div>
         </div>
     </div>

@@ -23,24 +23,29 @@ function my_wishlist() { // 위시리스트를 조회한다.
 
 function add_wishlist() { //선택한 아이템을 위시리스트로 옮겨야한다. #11
     let url = $("#url-input-box").val();
+
     if (url == "") {
         alert("주소를 입력해주세요")
         $("#url-input-box").focus()
         return
+    } else if (!url.includes("yes24.com")) {
+        alert("지원하지 않는 사이트입니다")
+    } else {
+        $.ajax({
+            type: "POST",
+            url: "/addWishlist",
+            data: {url: url},
+            success: function (response) { // 성공하면
+                if (response["result"] == "success") {
+                    console.log(response["msg"])
+                    $("#wish-info").html("");
+                    my_wishlist()
+                }
+            }
+        })
     }
 
-    $.ajax({
-        type: "POST",
-        url: "/addWishlist",
-        data: {url: url},
-        success: function (response) { // 성공하면
-            if (response["result"] == "success") {
-                console.log(response["msg"])
-                $("#wish-info").html("");
-                my_wishlist()
-            }
-        }
-    })
+
 }
 
 function now_reading_books() { // 읽는 책을 조회한다.
@@ -135,25 +140,25 @@ function buy_mybook(item) { //위시리스트에 넣어둔 책을 사려고한�
 }
 
 function add_mybook() { //바로 책에 추가한다.
-    let url = $("#url-input-box").val();
     if (url == "") {
         alert("주소를 입력해주세요")
         $("#url-input-box").focus()
         return
-    }
-
-
-    $.ajax({
-        type: "POST",
-        url: "/addMybook",
-        data: { url: url},
-        success: function (response) { // 성공하면
-            if (response["result"] == "success") {
-                console.log(response["msg"])
-                window.location.reload();
+    } else if (!url.includes("yes24.com")) {
+        alert("지원하지 않는 사이트입니다")
+    } else {
+        $.ajax({
+            type: "POST",
+            url: "/addMybook",
+            data: {url: url},
+            success: function (response) { // 성공하면
+                if (response["result"] == "success") {
+                    console.log(response["msg"])
+                    window.location.reload();
+                }
             }
-        }
-    })
+        })
+    }
 }
 
 function append_vercard(title, url, desc, author, image, isbn) {
@@ -240,4 +245,8 @@ function get_categories() { // 읽는 책을 조회한다.
             }
         }
     });
+}
+
+function clear_input_url() {
+    $("#url-input-box").val("");
 }
