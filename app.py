@@ -95,8 +95,8 @@ def add_mybook():
 @app.route('/viewMyReadBooks', methods=['GET'])
 def read_mybook_meta():
     read_mybook = list(db.mybook.find({'status': 'DOING'}, {'_id': False}))
-    print('내서재 모든아이템: ', read_mybook)
-    return jsonify({'result': 'success', 'msg': '내 도서 전체 조회완료', 'mybooks': read_mybook})
+    print('읽는책 모든아이템: ', read_mybook)
+    return jsonify({'result': 'success', 'msg': '읽는도서 전체 조회완료', 'mybooks': read_mybook})
 
 ### 위시리스트 조회 api
 @app.route('/viewWishlist', methods=['GET'])

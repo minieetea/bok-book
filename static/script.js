@@ -59,16 +59,13 @@ function now_reading_books() { // 읽는 책을 조회한다.
             console.log(response["msg"])
             if (response["result"] == "success") {
                 console.log("내 서재 조회 성공");
-                let wishlist = response["mybooks"]
-                for (let i = 0; i < wishlist.length; i++) {
-                    let title = wishlist[i]['title'];
-                    let desc = wishlist[i]['desc'];
-                    let image = wishlist[i]['image'];
-                    let url = wishlist[i]['url'];
-                    let author = wishlist[i]['author'];
-                    let price = wishlist[i]['price'];
-                    let isbn = wishlist[i]['isbn'];
-                    append_vercard(title, url, desc, author, image, price, isbn);
+                let reading = response["mybooks"]
+                for (let i = 0; i < reading.length; i++) {
+                    let image = reading[i]['image'];
+                    let isbn = reading[i]['isbn'];
+                    let progress = reading[i]['progress'];
+
+                    append_vercard(image, isbn, progress);
                 }
             }
         }
@@ -161,22 +158,26 @@ function add_mybook() { //바로 책에 추가한다.
     }
 }
 
-function append_vercard(title, url, desc, author, image, isbn) {
+function append_vercard(image, isbn, progress) {
     let vercard =
         `     <div class="reading-book-card">
                     <div class="progress">
-                      <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                      <div class="progress-bar" role="progressbar" style="width: ${progress}%;" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100">${progress}%</div>
                     </div>
                     <img src="${image}" class="card-img-top" alt="...">
                     <div class="card-footer">
                       <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic example">
-                          <button type="button" class="text-button left" onclick="alert(${isbn})">읽기</button>
-                          <button type="button" class="text-button right" onclick="alert(${isbn})">멈추기</button>
-                          <button type="button" class="text-button right" onclick="alert(${isbn})">완료</button>
+                          <button type="button" class="text-button left" onclick="alert('${isbn}')">읽기</button>
+                          <button type="button" class="text-button right" onclick="alert('${isbn}')">멈추기</button>
+                          <button type="button" class="text-button right" onclick="alert('${isbn}')">완료</button>
                         </div>
                      </div>
                   </div>`
     $('#book-info').append(vercard);
+    if (progress <25) {
+        $('.progress-bar').css("color", "black")
+    }
+
 }
 
 function append_vercard_wish(url, image, isbn) {
@@ -185,8 +186,8 @@ function append_vercard_wish(url, image, isbn) {
                     <img src="${image}" class="card-img-top">
                     <div class="card-footer">
                       <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic example">
-                          <button type="button" class="text-button left" onclick="buy_mybook(${isbn})">구입완료</button>
-                          <button type="button" class="text-button right" onclick="remove_wishlist(${isbn})">삭제하기</button>
+                          <button type="button" class="text-button left" onclick="buy_mybook('${isbn}')">구입완료</button>
+                          <button type="button" class="text-button right" onclick="remove_wishlist('${isbn}')">삭제하기</button>
                         </div>
                      </div>
                   </div>`
