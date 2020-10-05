@@ -2,24 +2,23 @@ from flask import Flask, render_template, jsonify, request
 from pymongo import MongoClient  # pymongo를 임포트 하기(패키지 인스톨 먼저 해야겠죠?)
 import requests  # 메타태그 스크래핑
 from bs4 import BeautifulSoup
-import clipboard  # 클립보드 가져오기
+# import clipboard  # 클립보드 가져오기
+import pyperclip
 
 app = Flask(__name__)
 
+# client = MongoClient('mongodb://test:test@localhost', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
 client = MongoClient('localhost', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
 db = client.dbsparta  # 'dbsparta'라는 이름의 db를 만들거나 사용합니다.
+
 
 ### 내서재 조회 web client
 @app.route('/')
 def mybooks():
     return render_template('index.html')
-# 내서재 추가
-@app.route('/addMybook', methods=['POST'])
-def addMybook():
-    # 클립보드에 있는거 불러오기
-    url = clipboard.paste()
-    print("주소복사완료:", url)
 
+
+def book_info_scrap(url):
     # 메타태그 스크랩핑하기
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
@@ -37,8 +36,43 @@ def addMybook():
     print('Yes24 도서상세 조회완료:')
     print(og_image, og_title, og_author, og_description, price, isbn)
 
+    return isbn, og_author, og_description, og_image, og_title, price
+
+# 위시리스트 추가 api
+@app.route('/addWishlist', methods=['POST'])
+def add_wishlist():
+    url_receive = request.form['url']
+
+    isbn, og_author, og_description, og_image, og_title, price = book_info_scrap(url_receive)
+
     book = {
-        "url": url,
+        "url": url_receive,
+        "image": og_image,
+        "title": og_title,
+        "author": og_author,
+        "desc": og_description,
+        "price": price,
+        "isbn": isbn
+    }
+
+    sr = db.wishlist.find_one({'isbn': isbn})
+    if sr is None:
+        db.wishlist.insert_one(book)
+        return jsonify({'result': 'success', 'msg': '위시리스트 추가 성공'})
+    else:
+        return jsonify({'result': 'success', 'msg': '중복도서가 있습니다'})
+
+
+# 내서재 추가
+@app.route('/addMybook', methods=['POST'])
+def add_mybook():
+    url_receive = request.form['url']
+    print("주소복사완료:", url_receive)
+
+    isbn, og_author, og_description, og_image, og_title, price = book_info_scrap(url_receive)
+
+    book = {
+        "url": url_receive,
         "image": og_image,
         "title": og_title,
         "author": og_author,
@@ -54,48 +88,6 @@ def addMybook():
     if sr is None:
         db.mybook.insert_one(book)
         return jsonify({'result': 'success', 'msg': '내 서재 추가 성공'})
-    else:
-        return jsonify({'result': 'success', 'msg': '중복도서가 있습니다'})
-
-
-# 위시리스트 추가 api
-@app.route('/addWishlist', methods=['POST'])
-def add_wishlist():
-    # 클립보드에 있는거 불러오기
-    url = clipboard.paste()
-    print("주소복사완료:", url)
-
-    # 메타태그 스크랩핑하기
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
-    data = requests.get(url, headers=headers)
-
-    soup = BeautifulSoup(data.text, 'html.parser')
-
-    og_image = soup.select_one('meta[property="og:image"]')['content']
-    og_title = soup.select_one('meta[property="og:title"]')['content']
-    og_author = soup.select_one('meta[name="author"]')['content']
-    og_description = soup.select_one('meta[property="og:description"]')['content']
-    price = soup.select_one('.nor_price > em').text
-    isbn = soup.select_one('meta[property="books:isbn"]')['content']
-
-    print('Yes24 도서상세 조회완료:')
-    print(og_image, og_title, og_author, og_description, price, isbn)
-
-    book = {
-        "url": url,
-        "image": og_image,
-        "title": og_title,
-        "author": og_author,
-        "desc": og_description,
-        "price": price,
-        "isbn": isbn
-    }
-
-    sr = db.wishlist.find_one({'isbn': isbn})
-    if sr is None:
-        db.wishlist.insert_one(book)
-        return jsonify({'result': 'success', 'msg': '위시리스트 추가 성공'})
     else:
         return jsonify({'result': 'success', 'msg': '중복도서가 있습니다'})
 
