@@ -47,7 +47,7 @@
 
             now_reading_books();
             my_wishlist();
-            my_books("완득");
+            my_books();
             get_categories();
         });
     </script>
@@ -58,6 +58,26 @@
     <nav class="navbar navbar-light bg-light" id="nav-top"></nav>
 </div>
 
+<div class="container">
+    <div class="input-group">
+        <input type="text" class="form-control" aria-label="Text input with segmented dropdown button" id="url-input-box">
+        <div class="input-group-append">
+            <button type="button" class="btn btn-outline-secondary" onclick="add_wishlist()">담기</button>
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" onclick="add_wishlist()">담기</a>
+                <a class="dropdown-item" onclick="add_mybook()">바로 저장하기</a>
+                <div role="separator" class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">지우기</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- 책리스트 -->
 <div class="container">
     <div class="section-nav"> 지금 읽고 있는 책</div>
@@ -66,17 +86,13 @@
 </div>
 
 <div class="container">
-    <div class="section-nav"> 위시리스트
-        <button type="button" class="btn btn-outline-secondary" onclick="add_wishlist(this)">사고싶은 책 담아두기</button>
-    </div>
+    <div class="section-nav"> 위시리스트</div>
     <div class="card-deck" id="wish-info">
     </div>
 </div>
 
 <div class="container">
-    <div class="section-nav"> 보유한 모든 책
-        <button type="button" class="btn btn-outline-secondary" onclick="add_mybook()">서재에 책 추가하기</button>
-    </div>
+    <div class="section-nav"> 전체 도 </div>
     <ul class="list-group col-3" id="category-group"></li>
     </ul>
     <ul class="list-items col-9">
