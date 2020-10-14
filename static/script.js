@@ -202,27 +202,37 @@ function append_mybooks(i, title, url, author, status, progress, isbn) {
                     <td>${author}</td>
                     <td>${progress}</td>
                     <td>${status}</td>
-                    <td><button type="button" value="${isbn}" onclick="view_mybook_info('${isbn}')">업데이트</button></td>
+                    <td><button type="button" value="${isbn}" onclick="open_details('${isbn}')">자세히보기</button></td>
         </tr>`
     $('#mybook-list').append(tablerow);
 }
 
-function view_mybook_info(isbn) {
+function open_details(isbn) {
     console.log("상세 개발시작---------", isbn)
-    $.ajax({
-        type: "GET",
-        url: "/detailMybook" + "?isbn=" + isbn,
-        data: {},
-        success: function (response) {
-            console.log(response["msg"])
-            if (response["result"] == "success") {
-                console.log("내 서재 조회 성공");
-                let book_detail = response["mybook"]
-                console.log('책정보', book_detail)
-            }
-        }
-    });
+    window.open('http://localhost:5000/details?isbn='+isbn, '_blank');
     console.log("상세 개발끝---------", isbn)
+}
+
+function view_details(){
+    const parsedUrl = new URL(window.location.href);
+
+    console.log(parsedUrl.searchParams.get("isbn")); // "123"
+    const parsedIsbn = parsedUrl.searchParams.get("isbn");
+
+    $.ajax({
+            type: "GET",
+            url: "/myBookDetails" + "?isbn=" + parsedIsbn,
+            data: {},
+            success: function (response) {
+                console.log(response["msg"])
+                if (response["result"] == "success") {
+                    console.log("내 서재 조회 성공");
+                    let book_detail = response["details"]
+                    console.log('책정보', book_detail)
+                }
+            }
+        });
+
 }
 
 function get_categories() { // 읽는 책을 조회한다.

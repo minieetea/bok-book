@@ -24,7 +24,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
             integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
             crossorigin="anonymous"></script>
-    
+
     <!-- js, css 파일 분리-->
     <script src="/static/script.js"></script>
     <link rel="stylesheet" href="/static/bokbook.css"/>
@@ -36,12 +36,7 @@
             $.get("/static/nav-top.html", function (data) {
                 $('#nav-top').html(data);
             });
-            $.get("/static/nav-bottom.html", function (data) {
-                $('#nav-bottom').html(data);
-            });
-            $.get("/static/modal.html", function (data) {
-                $('#modal').html(data);
-            });
+
             $("#book-info").html("");
             $("#wish-info").html("");
 
