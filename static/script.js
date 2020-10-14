@@ -118,14 +118,14 @@ function remove_wishlist(item) { //위시리스트를 제거한다. (개선필�
     })
 }
 
-function buy_mybook(item) { //위시리스트에 넣어둔 책을 사려고한다.
+function buy_mybook(item, bokYN) { //위시리스트에 넣어둔 책을 사려고한다.
     let item_isbn = item
     console.log("사려고 함:", item);
 
     $.ajax({
         type: "POST",
         url: "/buyMybook",
-        data: {isbn: item_isbn},
+        data: {isbn: item_isbn, bokYN: bokYN},
         success: function (response) { // 성공하면
             if (response["result"] == "success") {
                 console.log(response["msg"]);
@@ -186,7 +186,8 @@ function append_vercard_wish(url, image, isbn) {
                     <img src="${image}" class="card-img-top">
                     <div class="card-footer">
                       <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic example">
-                          <button type="button" class="text-button left" onclick="buy_mybook('${isbn}')">구입완료</button>
+<!--                          <button type="button" class="text-button left" onclick="buy_mybook('${isbn}')">구입완료</button>-->
+                          <button type="button" class="text-button left" data-toggle="modal" data-target="#bokbookModal" data-whatever="${isbn}">구입완료</button>
                           <button type="button" class="text-button right" onclick="remove_wishlist('${isbn}')">삭제하기</button>
                         </div>
                      </div>

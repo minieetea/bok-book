@@ -44,6 +44,26 @@
             my_wishlist();
             my_books();
             get_categories();
+
+            $('#bokbookModal').on('show.bs.modal', function (event) {
+                console.log("보인다모달");
+
+                var button = $(event.relatedTarget) // Button that triggered the modal
+                var isbn = button.data('whatever') // Extract info from data-* attributes
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                var modal = $(this)
+
+                $('#btn-bok-No').on('click', function (event) {
+                    alert("youser values are " + $(this).data("value") + isbn)
+                });
+
+                $('#btn-bok-Yes').on('click', function (event) {
+                    alert("youser values are " + $(this).data("value") + isbn)
+                });
+            })
+
+
         });
 
 
@@ -89,7 +109,7 @@
 </div>
 
 <div class="container">
-    <div class="section-nav"> 소장도서 </div>
+    <div class="section-nav"> 소장도서</div>
     <ul class="list-group col-3" id="category-group"></li>
     </ul>
     <ul class="list-items col-9">
@@ -113,6 +133,27 @@
 
 <div class="bottom-navbar-wrapper">
     <nav id="nav-bottom"></nav>
+</div>
+
+<div class="modal fade" id="bokbookModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">책을 구입할까요?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                복카드 구입여부를 변경하는 기능은 없습니다(ㅋㅋ) 신중하게 클릭하세요.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소하기</button>
+                <button type="button" class="btn btn-primary" id="btn-bok-No" data-value="false">내카드로 구입</button>
+                <button type="button" class="btn btn-danger" id="btn-bok-Yes" data-value="true">복카드로 구입</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>
