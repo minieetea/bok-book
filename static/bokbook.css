@@ -103,3 +103,29 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     background: #212529;
 
 }
+
+/*.card-img-bg {*/
+/*    width: 100%;*/
+/*    border-radius: calc(.25rem - 1px);*/
+/*    filter: blur(1px);*/
+/*    -webkit-filter: blur(10px);*/
+/*}*/
+
+.card {
+    box-shadow: 5px 5px 5px #00000014;
+    margin: 1rem 0rem 2rem 0rem;
+}
+
+.badge-bok {
+    z-index: 10;
+    position:absolute;
+	border-radius:30px;
+	box-shadow: 2px 2px 3px #999;
+    top: 30px;
+    right: 30px;
+}
+
+.card-sub-text {
+    font-weight: 200;
+    color: #545b62;
+}

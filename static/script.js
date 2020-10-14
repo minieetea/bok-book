@@ -228,12 +228,33 @@ function view_details(){
                 if (response["result"] == "success") {
                     console.log("내 서재 조회 성공");
                     let book_detail = response["details"]
+                    let title = book_detail['title']
+                    let desc = book_detail['desc']
+                    let price = book_detail['price']
+                    let isbn = book_detail['isbn']
+                    let image = book_detail['image']
+                    let author = book_detail['author']
+                    let category = book_detail['category']
+                    let status = book_detail['status']
+                    let progress = book_detail['progress']
+                    console.log(title)
                     console.log('책정보', book_detail)
+                    $('#book-title').text(title)
+                    $('#book-cover').attr("src", image);
+                    $('#book-desc').text(desc)
+                    $('#book-price').text(price+"원")
+                    $('#book-author').text(author)
+                    $('#book-isbn').text(isbn)
+                    $('#book-category').text(category)
+                    $('#book-status').text(status)
+                    $('#book-progress').text(progress+"%")
                 }
             }
         });
 
 }
+
+// function get_more_toc(){}
 
 function get_categories() { // 읽는 책을 조회한다.
     console.log('내서재 카테고리들 조회시작');

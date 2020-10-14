@@ -39,8 +39,9 @@
 
             $("#book-info").html("");
             $("#wish-info").html("");
-
             view_details();
+            // get_more_toc();
+
         });
 
 
@@ -52,5 +53,65 @@
     <nav class="navbar navbar-light bg-light" id="nav-top"></nav>
 </div>
 <div class="container">
+    <div class="card mb-12">
+        <img src="/static/icon_bok.png" width="50" height="50" class="badge-bok" id="book-bok-icon"
+             onclick="alert('누르지마!')">
+        <div class="row no-gutters">
+            <div class="col-md-3">
+                <img src="http://image.yes24.com/goods/91916588/L" class="card-img" id="book-cover" alt="...">
+            </div>
+            <div class="col-md-9">
+                <div class="card-body">
+                    <h5 class="card-title" id="book-title">title</h5>
+                    <p class="card-text" id="book-author">author</p>
+                    <p class="card-sub-text" id="book-price">price</p>
+                    <p class="card-sub-text" id="book-isbn">isbn</p>
+                    <p class="card-sub-text" id="book-category">category</p>
+                    <p class="card-sub-text" id="book-status">status</p>
+                    <p class="card-sub-text" id="book-progress">progress</p>
+                    <p class="card-text" id="book-desc">desc</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="card-title" style="font:bold">독서노트</h5>
+    <div class="card-columns">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Card title that wraps to a new line</h5>
+                <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional
+                    content. This content is a little bit longer.</p>
+            </div>
+        </div>
+        <div class="card p-3">
+            <blockquote class="blockquote mb-0 card-body">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                <footer class="blockquote-footer">
+                    <small class="text-muted">
+                        Someone famous in <cite title="Source Title">Source Title</cite>
+                    </small>
+                </footer>
+            </blockquote>
+        </div>
+        <div class="card bg-primary text-white text-center p-3">
+            blockquote class="blockquote mb-0">
+            <p>강렬한 구절.</p>
+            <footer class="blockquote-footer text-white">
+                <small>
+                    Someone famous in <cite title="Source Title">Source Title</cite>
+                </small>
+            </footer>
+            </blockquote>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">긴 타이틀을 남겨보면 어떻게 되는지 한번 남겨보자 </h5>
+                <p class="card-text">This is another card with title and supporting text below. This card has some
+                    additional content to make it slightly taller overall.</p>
+                <p class="card-text"><small class="text-muted">3 page </small></p>
+            </div>
+        </div>
+    </div>
 
 </div>
