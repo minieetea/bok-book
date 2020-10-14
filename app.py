@@ -114,6 +114,12 @@ def all_mybook_meta():
     print('내서재 모든아이템: ', all_mybook)
     return jsonify({'result': 'success', 'msg': '내 도서 전체 조회완료', 'mybooks': all_mybook})
 
+@app.route('/detailMybook', methods=['GET'])
+def get_mybook_info():
+    book_isbn = request.args.get('isbn')
+    mybook_info = db.mybook.find_one({'isbn': book_isbn}, {'_id': False})
+    print('내책상세:', mybook_info)
+    return jsonify({'result': 'success', 'msg': '도서 상세 조회완료', 'mybook': mybook_info})
 
 ### 위시리스트 제거 api
 @app.route('/removeWishlist', methods=['POST'])

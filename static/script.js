@@ -202,24 +202,27 @@ function append_mybooks(i, title, url, author, status, progress, isbn) {
                     <td>${author}</td>
                     <td>${progress}</td>
                     <td>${status}</td>
-                    <td><button type="button" value="${isbn}">업데이트</button></td>
+                    <td><button type="button" value="${isbn}" onclick="view_mybook_info('${isbn}')">업데이트</button></td>
         </tr>`
     $('#mybook-list').append(tablerow);
 }
 
-function getUrlParameter(sParam) {
-    var sPageURL = window.location.search.substring(1),
-        sURLVariables = sPageURL.split('&'),
-        sParameterName,
-        i;
-
-    for (i = 0; i < sURLVariables.length; i++) {
-        sParameterName = sURLVariables[i].split('=');
-
-        if (sParameterName[0] === sParam) {
-            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+function view_mybook_info(isbn) {
+    console.log("상세 개발시작---------", isbn)
+    $.ajax({
+        type: "GET",
+        url: "/detailMybook" + "?isbn=" + isbn,
+        data: {},
+        success: function (response) {
+            console.log(response["msg"])
+            if (response["result"] == "success") {
+                console.log("내 서재 조회 성공");
+                let book_detail = response["mybook"]
+                console.log('책정보', book_detail)
+            }
         }
-    }
+    });
+    console.log("상세 개발끝---------", isbn)
 }
 
 function get_categories() { // 읽는 책을 조회한다.
