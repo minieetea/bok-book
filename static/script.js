@@ -130,6 +130,8 @@ function buy_mybook(item, bokYN) { //위시리스트에 넣어둔 책을 사려�
         success: function (response) { // 성공하면
             if (response["result"] == "success") {
                 console.log(response["msg"]);
+                $('.toast').toast('show')
+                $('.toast-body').text(response["msg"])
                 $("#wish-info").html("");
                 my_wishlist();
             }

@@ -129,3 +129,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     font-weight: 200;
     color: #545b62;
 }
+
+.toast {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    box-shadow: 3px 3px 3px #00000038;
+    padding: 20px;
+    background-color: whitesmoke;
+    border-radius: 8px;
+    border-color: antiquewhite;
+}
+}
+
+.toast-body {
+    padding-top: 15px;
+
+}
