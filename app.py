@@ -52,7 +52,8 @@ def add_wishlist():
         "author": og_author,
         "desc": og_description,
         "price": price,
-        "isbn": isbn
+        "isbn": isbn,
+        "bokYN": False
     }
 
     sr = db.wishlist.find_one({'isbn': isbn})
@@ -81,7 +82,8 @@ def add_mybook():
         "isbn": isbn,
         "status": "READY",
         "progress": "0",
-        "category": "미분류"
+        "category": "미분류",
+        "bokYN": False
     }
 
     sr = db.mybook.find_one({'isbn': isbn})
@@ -145,19 +147,29 @@ def remove_wishlist():
 @app.route('/buyMybook', methods=['POST'])
 def buy_mybook():
     isbn_receive = request.form['isbn']
-    print("위시리스트에서 사려고 함:", isbn_receive)
+    bokYN_receive = request.form['bokYN']
+    print("위시리스트에서 사려고 함:", isbn_receive, bokYN_receive)
+
     # wish 리스트의 상태를 업데이트하고, 책정보를 받아 소장상태로 변경한다.
     # 위시리스트에서 소장하는 경우 : 위시리스트에서 제거, 소장도서 목록에 추가
     wishbook = db.wishlist.find_one({"isbn": isbn_receive})
     mybook = db.mybook.find_one({"isbn": isbn_receive})
+    print(mybook['bokYN'])
 
     if mybook is not None: #내 서재에 이미 있으면
-        db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
-        return jsonify({'result': 'success', 'msg': '소장도서'})
-    else: #내 서재에 없으면 구입가능
+        if mybook['bokYN'] == "false" and bokYN_receive == "true" : #개카로 샀던 책 복카로 다시 사는 경우 도서상태 초기화 후 복카드여부 업데이트
+            db.mybook.update({'isbn': isbn_receive},
+                             {"$set": {"status": "READY", "progress": "0", "category": "미분류", "bokYN": bokYN_receive}},
+                             upsert=False)
+            db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
+            return jsonify({'result': 'success', 'msg': '소장도서 복카드로 업데이트함'})
+        else:
+            db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
+            return jsonify({'result': 'success', 'msg': '소장도서'})
+    else: #내 서재에 없으면
         if wishbook is not None: #위시리스트에 있으면
             db.mybook.insert_one(wishbook)  # 서재에 추가
-            db.mybook.update({'isbn': isbn_receive}, {"$set": {"status": "READY", "progress": "0", "category": "미분류"}}, upsert=False)
+            db.mybook.update({'isbn': isbn_receive}, {"$set": {"status": "READY", "progress": "0", "category": "미분류", "bokYN": bokYN_receive}}, upsert=False)
             db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
             return jsonify({'result': 'success', 'msg': '도서구매 완료'})
         else:

@@ -48,22 +48,19 @@
             $('#bokbookModal').on('show.bs.modal', function (event) {
                 console.log("보인다모달");
 
-                var button = $(event.relatedTarget) // Button that triggered the modal
-                var isbn = button.data('whatever') // Extract info from data-* attributes
-                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-                var modal = $(this)
+                var button = $(event.relatedTarget)
+                var isbn = button.data('whatever')
 
                 $('#btn-bok-No').on('click', function (event) {
-                    alert("youser values are " + $(this).data("value") + isbn)
+                    console.log("youser values are " + $(this).data("value") + isbn)
+                    buy_mybook(isbn, $(this).data("value"))
                 });
 
                 $('#btn-bok-Yes').on('click', function (event) {
-                    alert("youser values are " + $(this).data("value") + isbn)
+                    console.log("youser values are " + $(this).data("value") + isbn)
+                    buy_mybook(isbn, $(this).data("value"))
                 });
             })
-
-
         });
 
 
@@ -135,6 +132,7 @@
     <nav id="nav-bottom"></nav>
 </div>
 
+<!-- 구매할 때 뜨는 모달. 이렇게 하는거 맞아요 -->
 <div class="modal fade" id="bokbookModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -149,8 +147,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">취소하기</button>
-                <button type="button" class="btn btn-primary" id="btn-bok-No" data-value="false">내카드로 구입</button>
-                <button type="button" class="btn btn-danger" id="btn-bok-Yes" data-value="true">복카드로 구입</button>
+                <button type="button" class="btn btn-primary" id="btn-bok-No" data-dismiss="modal" data-value="false">내카드로 구입</button>
+                <button type="button" class="btn btn-danger" id="btn-bok-Yes" data-dismiss="modal" data-value="true">복카드로 구입</button>
             </div>
         </div>
     </div>
