@@ -121,7 +121,7 @@ function remove_wishlist(item) { //위시리스트를 제거한다. (개선필�
 function buy_mybook(item, bokYN) { //위시리스트에 넣어둔 책을 사려고한다.
     let item_isbn = item
     let item_bok_yn = bokYN
-    console.log("사려고 함:", item);
+    console.log("사려고 함:", item, bokYN);
 
     $.ajax({
         type: "POST",
@@ -212,7 +212,7 @@ function append_mybooks(i, title, url, author, status, progress, isbn) {
 
 function open_details(isbn) {
     console.log("상세 개발시작---------", isbn)
-    window.open('http://localhost:5000/details?isbn='+isbn, '_blank');
+    window.open('../details?isbn='+isbn, '_blank');
     console.log("상세 개발끝---------", isbn)
 }
 
