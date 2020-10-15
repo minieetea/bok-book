@@ -154,7 +154,7 @@ def buy_mybook():
     # 위시리스트에서 소장하는 경우 : 위시리스트에서 제거, 소장도서 목록에 추가
     wishbook = db.wishlist.find_one({"isbn": isbn_receive})
     mybook = db.mybook.find_one({"isbn": isbn_receive})
-    print(mybook['bokYN'])
+    # print(mybook['bokYN'])
 
     if mybook is not None: #내 서재에 이미 있으면
         if mybook['bokYN'] == "false" and bokYN_receive == "true" : #개카로 샀던 책 복카로 다시 사는 경우 도서상태 초기화 후 복카드여부 업데이트
