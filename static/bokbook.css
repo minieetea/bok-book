@@ -118,9 +118,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .badge-bok {
     z-index: 10;
-    position:absolute;
-	border-radius:30px;
-	box-shadow: 2px 2px 3px #999;
+    position: absolute;
+    border-radius: 30px;
+    box-shadow: 2px 2px 3px #999;
     top: 30px;
     right: 30px;
 }
@@ -132,7 +132,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .toast {
     position: fixed;
-    bottom: 30px;
+    tom: 30px;
     right: 30px;
     box-shadow: 3px 3px 3px #00000038;
     padding: 20px;
@@ -147,4 +147,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .toast-body {
     padding-top: 15px;
 
+}
+
+#url-input-group {
+    padding: 30px 20px 10px 20px;
+    margin-top: 10px;
+    background: #e2ebf3;
+    border-radius: 8px;
+}
+
+ul {
+    font: inherit;
+    color: #7d7d7d;
+    font-size: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
