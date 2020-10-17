@@ -255,6 +255,7 @@ function view_details(){
                     let category = book_detail['category']
                     let status = book_detail['status']
                     let progress = book_detail['progress']
+                    let bokYN = book_detail['botYN']
                     console.log(title)
                     console.log('책정보', book_detail)
                     $('#book-title').text(title)
@@ -266,10 +267,12 @@ function view_details(){
                     $('#book-category').text(category)
                     $('#book-status').text(status)
                     $('#book-progress').text(progress+"%")
+                    if(bokYN!=="true")
+                        $('#book-bok-icon').css("display", "none")
+
                 }
             }
         });
-
 }
 
 // function get_more_toc(){}
