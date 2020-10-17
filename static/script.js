@@ -255,7 +255,7 @@ function view_details(){
                     let category = book_detail['category']
                     let status = book_detail['status']
                     let progress = book_detail['progress']
-                    let bokYN = book_detail['botYN']
+                    let bokYN = book_detail['bokYN']
                     console.log(title)
                     console.log('책정보', book_detail)
                     $('#book-title').text(title)
@@ -267,8 +267,11 @@ function view_details(){
                     $('#book-category').text(category)
                     $('#book-status').text(status)
                     $('#book-progress').text(progress+"%")
-                    if(bokYN!=="true")
+                    console.log(bokYN)
+                    if(bokYN=="false"){
+                        console.log(bokYN)
                         $('#book-bok-icon').css("display", "none")
+                    }
 
                 }
             }
@@ -323,7 +326,7 @@ function view_notes() {
 
                 // let listrow = `<li class="list-group-item d-flex justify-content-between align-items-center" onclick="my_books(encodeURI('${name}'))">
                 //                     ${name}
-                //                     <span class="badge badge-primary badge-pill">${count}</span>
+                //                     <span class="badge badge-primary badge-pill">${count}</span
                 //                 </li>`
                 // $('#category-group').append(listrow);
             }
