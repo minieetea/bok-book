@@ -204,8 +204,8 @@ def get_categories():
 def add_note():
     isbn_receive = request.form['isbn']
     note_type = request.form['note_type']
-    note_message = request.form['note_type']
-    note_ref = request.form['note_type']
+    note_message = request.form['note_message']
+    note_ref = request.form['note_ref']
     note_keep = request.form['note_keep']
 
     note = {

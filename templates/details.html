@@ -74,6 +74,29 @@
 
                 update_progress(parsedIsbn);
             })
+
+            //노트저장하기
+            $('#save-note').on('click', function (event) {
+
+                const parsedUrl = new URL(window.location.href);
+                console.log(parsedUrl.searchParams.get("isbn")); // "123"
+                const parsedIsbn = parsedUrl.searchParams.get("isbn");
+
+                console.log("저장하련다");
+                console.log($('input:radio[name="noteTypeOptions"]:checked').val()); //라디오버튼 선택된 값 가져오기
+                console.log($('input:checkbox[id="highlightCheck"]').val()); //라디오버튼 선택된 값 가져오기
+                console.log($('#note-message').val()); //내용가져오기
+                console.log($('#note_ref').val()); //출처가져오기
+
+                let noteType = $('input:radio[name="noteTypeOptions"]:checked').val(); //라디오버튼 선택된 값 가져오기
+                let noteHightlight = $('input:checkbox[id="highlightCheck"]').val(); //라디오버튼 선택된 값 가져오기
+                let noteMessage = $('#note-message').val(); //내용가져오기
+                //TODO 내용은 필수값으로 처리해야함
+                let noteRef = $('#note_ref').val(); //출처가져오기
+
+                add_note(parsedIsbn, noteMessage, noteType, noteHightlight, noteRef);
+
+            })
         });
 
     </script>
@@ -96,17 +119,18 @@
                     <h5 class="card-title" id="book-title">title</h5>
                     <p class="card-text" id="book-author">author</p>
                     <p class="card-sub-text" id="book-price">price</p>
-<!--                    <p class="card-sub-text" id="book-isbn">isbn</p>-->
                     <p class="card-text" id="book-desc">desc</p>
                     <p class="card-sub-text" id="book-category">category</p>
-                    <p class="card-sub-text" id="book-status">status</p>
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group mr-2" role="group" aria-label="First group">
+                            <button type="button" class="btn btn-light" id="book-status">status</button>
+                        </div>
+                        <div class="btn-group mr-2" role="group" aria-label="Second group">
                             <button type="button" class="btn btn-secondary btn-progress-update">읽기(<span id="book-progress">progress</span>)</button>
                             <button type="button" class="btn btn-secondary btn-status-update" data-status="STOP">멈추기</button>
                             <button type="button" class="btn btn-secondary btn-status-update" data-status="DONE">완료</button>
                         </div>
-                        <div class="btn-group mr-2" role="group" aria-label="Second group">
+                        <div class="btn-group mr-2" role="group" aria-label="Third group">
                             <button type="button" class="btn btn-danger btn-status-update" data-status="DELETED">삭제</button>
                         </div>
                     </div>
@@ -168,17 +192,17 @@
             <div class="modal-body">
                 <form>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="noteType_body"
+                        <input class="form-check-input" type="radio" name="noteTypeOptions" id="noteType_body"
                                value="body">
                         <label class="form-check-label" for="noteType_body">본문</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="noteType_ref"
+                        <input class="form-check-input" type="radio" name="noteTypeOptions" id="noteType_ref"
                                value="ref">
                         <label class="form-check-label" for="noteType_ref">인용</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="noteType_memo"
+                        <input class="form-check-input" type="radio" name="noteTypeOptions" id="noteType_memo"
                                value="memo">
                         <label class="form-check-label" for="noteType_memo">메모</label>
                     </div>
@@ -187,8 +211,8 @@
                         <textarea class="form-control" id="note-message"></textarea>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="highlight">
-                        <label class="form-check-label" for="inlineCheckbox1">강조</label>
+                        <input class="form-check-input" type="checkbox" id="highlightCheck" value="highlight">
+                        <label class="form-check-label" for="highlightCheck">강조</label>
                     </div>
 
                     <div class="form-group">

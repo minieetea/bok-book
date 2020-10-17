@@ -115,7 +115,6 @@ function remove_wishlist(item) { //위시리스트를 제거한다. (개선필�
             $("#wish-info").html("");
         }
     })
-    // my_wishlist();
 }
 
 function buy_mybook(item, bokYN) { //위시리스트에 넣어둔 책을 사려고한다.
@@ -340,6 +339,26 @@ function clear_input_url() {
     $("#url-input-box").val("");
 }
 
+function add_note(parsedIsbn, noteMessage, noteType, noteHightlight, noteRef){
+
+    $.ajax({
+            type: "POST",
+            url: "/addNote",
+            data: { isbn: parsedIsbn,
+                    note_type: noteType,
+                    note_message: noteMessage,
+                    note_ref: noteRef,
+                    note_keep: noteHightlight
+                    },
+            success: function (response) { // 성공하면
+                if (response["result"] == "success") {
+                    $('.toast').toast('show')
+                    $('.toast-body').text(response["msg"])
+                }
+            }
+        });
+
+}
 function view_notes() {
     console.log("노트불러오기=======")
     $.ajax({
