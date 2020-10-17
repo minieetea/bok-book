@@ -38,6 +38,7 @@ def book_info_scrap(url):
 
     return isbn, og_author, og_description, og_image, og_title, price
 
+
 # 위시리스트 추가 api
 @app.route('/addWishlist', methods=['POST'])
 def add_wishlist():
@@ -57,11 +58,11 @@ def add_wishlist():
     }
 
     sr = db.wishlist.find_one({'isbn': isbn})
-    if sr is None:
+    if sr is None:  # 위시리스트에 없으면
         db.wishlist.insert_one(book)
         return jsonify({'result': 'success', 'msg': '도서를 담았습니다.'})
     else:
-        return jsonify({'result': 'success', 'msg': '이미 담아 도서입니다.'})
+        return jsonify({'result': 'success', 'msg': '이미 담아둔 도서입니다.'})
 
 
 # 내서재 추가
@@ -93,12 +94,14 @@ def add_mybook():
     else:
         return jsonify({'result': 'success', 'msg': '중복도서가 있습니다'})
 
+
 ### 지금 읽는 책들만
 @app.route('/viewMyReadBooks', methods=['GET'])
 def read_mybook_meta():
     read_mybook = list(db.mybook.find({'status': 'DOING'}, {'_id': False}))
     print('읽는책 모든아이템: ', read_mybook)
     return jsonify({'result': 'success', 'msg': '읽는도서 전체 조회완료', 'mybooks': read_mybook})
+
 
 ### 위시리스트 조회 api
 @app.route('/viewWishlist', methods=['GET'])
@@ -107,12 +110,14 @@ def read_bookmeta():
     print('위시리스트 모든아이템: ', all_wishlist)
     return jsonify({'result': 'success', 'msg': '위시리스트 전체 조회완료', 'wishbooks': all_wishlist})
 
+
 ### 내 서재 조회
 @app.route('/viewMybooks', methods=['GET'])
 def all_mybook_meta():
     print('카테고리: ', request.args.get('ct'))
     ct = request.args.get('ct')
-    all_mybook = list(db.mybook.find({'category': {'$regex': ct}, 'status': {"$ne": 'DELETED'}}, {'_id': False})) #삭제된 것은 리스트에서 미노출된다.
+    all_mybook = list(db.mybook.find({'category': {'$regex': ct}, 'status': {"$ne": 'DELETED'}},
+                                     {'_id': False}))  # 삭제된 것은 리스트에서 미노출된다.
     print('내서재 모든아이템: ', all_mybook)
     return jsonify({'result': 'success', 'msg': '내 도서 전체 조회완료', 'mybooks': all_mybook})
 
@@ -123,12 +128,14 @@ def book_details():
     book_isbn = request.args.get('isbn')
     return render_template('details.html', isbn=book_isbn)
 
+
 @app.route('/myBookDetails', methods=['GET'])
 def book_details_info():
     isbn_receive = request.args.get('isbn')
     mybook_info = db.mybook.find_one({'isbn': isbn_receive}, {'_id': False})
     print('내책상세:', mybook_info)
     return jsonify({'result': 'success', 'msg': '상세 조회완료', 'details': mybook_info})
+
 
 ### 위시리스트 제거 api
 @app.route('/removeWishlist', methods=['POST'])
@@ -143,6 +150,7 @@ def remove_wishlist():
     else:
         return jsonify({'result': 'success', 'msg': '위시리스트에서 제거완료'})
 
+
 ## =============================================
 @app.route('/buyMybook', methods=['POST'])
 def buy_mybook():
@@ -156,24 +164,26 @@ def buy_mybook():
     mybook = db.mybook.find_one({"isbn": isbn_receive})
     # print(mybook['bokYN'])
 
-    if mybook is not None: #내 서재에 이미 있으면
-        if mybook['bokYN'] == "false" and bokYN_receive == "true" : #개카로 샀던 책 복카로 다시 사는 경우 도서상태 초기화 후 복카드여부 업데이트
+    if mybook is not None:  # 내 서재에 이미 있으면
+        if mybook['bokYN'] == "false" and bokYN_receive == "true":  # 개카로 샀던 책 복카로 다시 사는 경우 도서상태 초기화 후 복카드여부 업데이트
             db.mybook.update({'isbn': isbn_receive},
                              {"$set": {"status": "READY", "progress": "0", "category": "미분류", "bokYN": bokYN_receive}},
                              upsert=False)
             db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
-            return jsonify({'result': 'success', 'msg': wishbook['title']+'는(은) 이미 소장하고 있어, 복카드 구매를 추가했습니다.'})
+            return jsonify({'result': 'success', 'msg': wishbook['title'] + '는(은) 이미 소장하고 있어, 복카드 구매를 추가했습니다.'})
         else:
             db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
-            return jsonify({'result': 'success', 'msg': wishbook['title']+'는(은) 이미 소장하고 있는 도서입니다.'})
-    else: #내 서재에 없으면
-        if wishbook is not None: #위시리스트에 있으면
+            return jsonify({'result': 'success', 'msg': wishbook['title'] + '는(은) 이미 소장하고 있는 도서입니다.'})
+    else:  # 내 서재에 없으면
+        if wishbook is not None:  # 위시리스트에 있으면
             db.mybook.insert_one(wishbook)  # 서재에 추가
-            db.mybook.update({'isbn': isbn_receive}, {"$set": {"status": "READY", "progress": "0", "category": "미분류", "bokYN": bokYN_receive}}, upsert=False)
+            db.mybook.update({'isbn': isbn_receive},
+                             {"$set": {"status": "READY", "progress": "0", "category": "미분류", "bokYN": bokYN_receive}},
+                             upsert=False)
             db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
-            return jsonify({'result': 'success', 'msg': wishbook['title']+' 도서를 구매했습니다.'})
+            return jsonify({'result': 'success', 'msg': wishbook['title'] + ' 도서를 구매했습니다.'})
         else:
-            return jsonify({'result': 'success', 'msg': wishbook['title']+'는(은) 위시리스트에서 제거된 도서입니다.'})
+            return jsonify({'result': 'success', 'msg': wishbook['title'] + '는(은) 위시리스트에서 제거된 도서입니다.'})
 
 
 @app.route('/getCategories', methods=['GET'])
@@ -208,6 +218,7 @@ def add_note():
     db.note.insert_one(note)
     return jsonify({'result': 'success', 'msg': '노트를 추가했습니다.'})
 
+
 @app.route('/viewNotes', methods=['GET'])
 def view_notes():
     isbn_receive = request.args.get('isbn')
@@ -215,12 +226,35 @@ def view_notes():
     print('독서노트 모든아이템: ', notes)
     return jsonify({'result': 'success', 'msg': '독서노트 조회완료', 'notes': notes})
 
+@app.route('/updateStatus', methods=['POST'])
+def stop_read():
+    # isbn 받아서
+    # 상태를 변경
+    # 상태를 중단으로 변경 (doing -> stop)
+    isbn_receive = request.form['isbn']
+    status_receive = request.form['status']
+    db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'status': status_receive}})
+    return jsonify({'result': 'success', 'msg': '변경완료'})
 
-
+@app.route('/updateProgress', methods=['POST'])
+def update_progress():
+    # isbn 받아서
+    # 5%씩 증가시키기
+    # 100에 이르면 완료상태로 업데이트
+    isbn_receive = request.form['isbn']
+    mb = db.mybook.find_one({"isbn": isbn_receive})
+    print(mb)
+    print(mb['progress'])
+    new_progress = str(int(mb['progress']) + 5)
+    print(new_progress)
+    if new_progress == '100':
+        db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'status': 'DONE', 'progress': new_progress}})
+    else:
+        db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'progress': new_progress}})
+    return jsonify({'result': 'success', 'msg': '변경완료'})
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
-
 
 ### 테스트코드
 # 조건문 db.wishlist.find_one({"$or": [{'isbn': isbn_receive}, {'title': title_receive}]}, {'_id': False})

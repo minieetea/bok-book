@@ -113,9 +113,9 @@ function remove_wishlist(item) { //위시리스트를 제거한다. (개선필�
             else
                 console.log("왠지 모르지만 실패");
             $("#wish-info").html("");
-            my_wishlist();
         }
     })
+    // my_wishlist();
 }
 
 function buy_mybook(item, bokYN) { //위시리스트에 넣어둔 책을 사려고한다.
@@ -133,7 +133,6 @@ function buy_mybook(item, bokYN) { //위시리스트에 넣어둔 책을 사려�
                 $('.toast').toast('show')
                 $('.toast-body').text(response["msg"])
                 $("#wish-info").html("");
-                window.location.reload();
             }
         }
     })
@@ -155,11 +154,40 @@ function add_mybook() { //바로 책에 추가한다.
                 if (response["result"] == "success") {
                     $('.toast').toast('show')
                     $('.toast-body').text(response["msg"])
-                    window.location.reload();
                 }
             }
         });
     }
+}
+
+function update_status(isbn, status) {
+    console.log("상태변경하기", isbn, status)
+        $.ajax({
+            type: "POST",
+            url: "/updateStatus",
+            data: {isbn: isbn, status: status},
+            success: function (response) { // 성공하면
+                if (response["result"] == "success") {
+                    $('.toast').toast('show')
+                    $('.toast-body').text(response["msg"])
+                }
+            }
+        });
+}
+
+function update_progress(isbn) {
+    console.log("진척률 변경하기", isbn)
+        $.ajax({
+            type: "POST",
+            url: "/updateProgress",
+            data: {isbn: isbn},
+            success: function (response) { // 성공하면
+                if (response["result"] == "success") {
+                    $('.toast').toast('show')
+                    $('.toast-body').text(response["msg"])
+                }
+            }
+        });
 }
 
 function append_vercard(image, isbn, progress) {
@@ -171,9 +199,9 @@ function append_vercard(image, isbn, progress) {
                     <img src="${image}" class="card-img-top" alt="...">
                     <div class="card-footer">
                       <div class="btn-group d-flex justify-content-center" role="group" aria-label="Basic example">
-                          <button type="button" class="text-button left" onclick="alert('${isbn}')">읽기</button>
-                          <button type="button" class="text-button right" onclick="alert('${isbn}')">멈추기</button>
-                          <button type="button" class="text-button right" onclick="alert('${isbn}')">완료</button>
+                          <button type="button" class="text-button left" onclick="update_progress('${isbn}')">읽기</button>
+                          <button type="button" class="text-button right" onclick="update_status('${isbn}', 'STOP')">멈추기</button>
+                          <button type="button" class="text-button right" onclick="update_status('${isbn}', 'DONE')">완료</button>
                         </div>
                      </div>
                   </div>`
