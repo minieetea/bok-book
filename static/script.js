@@ -304,3 +304,27 @@ function get_categories() { // 읽는 책을 조회한다.
 function clear_input_url() {
     $("#url-input-box").val("");
 }
+
+function view_notes() {
+    console.log("노트불러오기=======")
+    $.ajax({
+        type: "GET",
+        url: "/viewNotes",
+        data: {},
+        success: function (response) {
+            console.log(response["msg"])
+            let notes = response["notes"]
+            console.log(notes)
+            for (let i = 0; i < notes.length; i++) {
+                console.log(notes[i])
+
+                // let listrow = `<li class="list-group-item d-flex justify-content-between align-items-center" onclick="my_books(encodeURI('${name}'))">
+                //                     ${name}
+                //                     <span class="badge badge-primary badge-pill">${count}</span>
+                //                 </li>`
+                // $('#category-group').append(listrow);
+            }
+        }
+    });
+    console.log("노트불러오기 끗=======")
+}
