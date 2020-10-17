@@ -244,6 +244,12 @@ def update_progress():
         db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'status': 'DOING', 'progress': new_progress}})
     return jsonify({'result': 'success', 'msg': '변경완료'})
 
+@app.route('/addCategory', methods=['POST'])
+def add_category():
+    category_name = request.form['name']
+    db.category.insert_one({'name': category_name, 'count': 0})
+    return jsonify({'result': 'success', 'msg': '카테고리가 추가되었습니다'})
+
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
 

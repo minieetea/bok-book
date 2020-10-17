@@ -330,10 +330,30 @@ function get_categories() { // 읽는 책을 조회한다.
                                 </li>`
                 $('#category-group').append(listrow);
             }
+            let alpharow = `<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="modal" data-target="#categoryModal">카테고리 추가<i class="fas fa-plus"></i></li>`
+            $('#category-group').append(alpharow);
+
         }
     });
 }
 
+function add_category(name) {
+    console.log("카테고리 추가 api 호출")
+    $.ajax({
+        type: "POST",
+        url: "/addCategory",
+        data: {
+            name: name
+        },
+        success: function (response) { // 성공하면
+            if (response["result"] == "success") {
+                $('.toast').toast('show')
+                $('.toast-body').text(response["msg"])
+            }
+        }
+    });
+
+}
 function clear_input_url() {
     $("#url-input-box").val("");
 }
