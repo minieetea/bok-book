@@ -99,7 +99,7 @@ def add_mybook():
 @app.route('/viewMyReadBooks', methods=['GET'])
 def read_mybook_meta():
     read_mybook = list(db.mybook.find({'status': 'DOING'}, {'_id': False}))
-    print('읽는책 모든아이템: ', read_mybook)
+    # print('읽는책 모든아이템: ', read_mybook)
     return jsonify({'result': 'success', 'msg': '읽는도서 전체 조회완료', 'mybooks': read_mybook})
 
 
@@ -107,18 +107,19 @@ def read_mybook_meta():
 @app.route('/viewWishlist', methods=['GET'])
 def read_bookmeta():
     all_wishlist = list(db.wishlist.find({}, {'_id': False}))
-    print('위시리스트 모든아이템: ', all_wishlist)
+    # print('위시리스트 모든아이템: ', all_wishlist)
     return jsonify({'result': 'success', 'msg': '위시리스트 전체 조회완료', 'wishbooks': all_wishlist})
 
 
 ### 내 서재 조회
 @app.route('/viewMybooks', methods=['GET'])
 def all_mybook_meta():
-    print('카테고리: ', request.args.get('ct'))
     ct = request.args.get('ct')
-    all_mybook = list(db.mybook.find({'category': {'$regex': ct}, 'status': {"$ne": 'DELETED'}},
-                                     {'_id': False}))  # 삭제된 것은 리스트에서 미노출된다.
-    print('내서재 모든아이템: ', all_mybook)
+    if ct == 'undefined':
+        all_mybook = list(db.mybook.find({'status': {"$ne": 'DELETED'}}, {'_id': False}))
+    else:
+        all_mybook = list(db.mybook.find({'category': {'$regex': ct}, 'status': {"$ne": 'DELETED'}},
+                                         {'_id': False}))  # 삭제된 것은 리스트에서 미노출된다.
     return jsonify({'result': 'success', 'msg': '내 도서 전체 조회완료', 'mybooks': all_mybook})
 
 
@@ -225,12 +226,14 @@ def view_notes():
     notes = list(db.note.find({'isbn': isbn_receive}, {'_id': False}))
     return jsonify({'result': 'success', 'msg': '독서노트 조회완료', 'notes': notes})
 
+
 @app.route('/updateStatus', methods=['POST'])
 def stop_read():
     isbn_receive = request.form['isbn']
     status_receive = request.form['status']
     db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'status': status_receive}})
     return jsonify({'result': 'success', 'msg': '변경완료'})
+
 
 @app.route('/updateProgress', methods=['POST'])
 def update_progress():
@@ -244,18 +247,22 @@ def update_progress():
         db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'status': 'DOING', 'progress': new_progress}})
     return jsonify({'result': 'success', 'msg': '변경완료'})
 
+
 @app.route('/addCategory', methods=['POST'])
 def add_category():
     category_name = request.form['name']
     db.category.insert_one({'name': category_name, 'count': 0})
     return jsonify({'result': 'success', 'msg': '카테고리가 추가되었습니다'})
 
+
 @app.route('/updateCategory', methods=['POST'])
 def update_category():
     isbn_receive = request.form['isbn']
     category_name = request.form['name']
     db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'category': category_name}})
+    get_categories()
     return jsonify({'result': 'success', 'msg': '변경완료'})
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
