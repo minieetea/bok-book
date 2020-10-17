@@ -139,6 +139,7 @@ function buy_mybook(item, bokYN) { //위시리스트에 넣어둔 책을 사려�
 }
 
 function add_mybook() { //바로 책에 추가한다.
+    let url = $("#url-input-box").val();
     if (url == "") {
         alert("주소를 입력해주세요")
         $("#url-input-box").focus()
