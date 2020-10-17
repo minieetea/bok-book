@@ -162,32 +162,32 @@ function add_mybook() { //바로 책에 추가한다.
 
 function update_status(isbn, status) {
     console.log("상태변경하기", isbn, status)
-        $.ajax({
-            type: "POST",
-            url: "/updateStatus",
-            data: {isbn: isbn, status: status},
-            success: function (response) { // 성공하면
-                if (response["result"] == "success") {
-                    $('.toast').toast('show')
-                    $('.toast-body').text(response["msg"])
-                }
+    $.ajax({
+        type: "POST",
+        url: "/updateStatus",
+        data: {isbn: isbn, status: status},
+        success: function (response) { // 성공하면
+            if (response["result"] == "success") {
+                $('.toast').toast('show')
+                $('.toast-body').text(response["msg"])
             }
-        });
+        }
+    });
 }
 
 function update_progress(isbn) {
     console.log("진척률 변경하기", isbn)
-        $.ajax({
-            type: "POST",
-            url: "/updateProgress",
-            data: {isbn: isbn},
-            success: function (response) { // 성공하면
-                if (response["result"] == "success") {
-                    $('.toast').toast('show')
-                    $('.toast-body').text(response["msg"])
-                }
+    $.ajax({
+        type: "POST",
+        url: "/updateProgress",
+        data: {isbn: isbn},
+        success: function (response) { // 성공하면
+            if (response["result"] == "success") {
+                $('.toast').toast('show')
+                $('.toast-body').text(response["msg"])
             }
-        });
+        }
+    });
 }
 
 function append_vercard(image, isbn, progress) {
@@ -206,7 +206,7 @@ function append_vercard(image, isbn, progress) {
                      </div>
                   </div>`
     $('#book-info').append(vercard);
-    if (progress <25) {
+    if (progress < 25) {
         $('.progress-bar').css("color", "black")
     }
 
@@ -231,7 +231,7 @@ function append_mybooks(i, title, url, status, bokYN, isbn) {
     if (bokYN == "true") {
         console.log("응응")
         let tablerow =
-        `<tr>
+            `<tr>
                     <th scope="row">${i}</th>
                     <td><a href="${url}">${title}</a></td>
                     <td>${status}</td>
@@ -239,10 +239,9 @@ function append_mybooks(i, title, url, status, bokYN, isbn) {
                     <td><button type="button" value="${isbn}" onclick="open_details('${isbn}')">독서노트</button></td>
         </tr>`
         $('#mybook-list').append(tablerow);
-    }
-    else {
+    } else {
         let tablerow =
-        `<tr>
+            `<tr>
                     <th scope="row">${i}</th>
                     <td><a href="${url}">${title}</a></td>
                     <td>${status}</td>
@@ -255,55 +254,55 @@ function append_mybooks(i, title, url, status, bokYN, isbn) {
 
 function open_details(isbn) {
     console.log("상세 개발시작---------", isbn)
-    window.open('../details?isbn='+isbn, '_blank');
+    window.open('../details?isbn=' + isbn, '_blank');
     console.log("상세 개발끝---------", isbn)
 }
 
-function view_details(){
+function view_details() {
     const parsedUrl = new URL(window.location.href);
     console.log(parsedUrl.searchParams.get("isbn")); // "123"
     const parsedIsbn = parsedUrl.searchParams.get("isbn");
 
     $.ajax({
-            type: "GET",
-            url: "/myBookDetails" + "?isbn=" + parsedIsbn,
-            data: {},
-            success: function (response) {
-                console.log(response["msg"])
-                if (response["result"] == "success") {
-                    console.log("내 서재 조회 성공");
-                    let book_detail = response["details"]
-                    let title = book_detail['title']
-                    let desc = book_detail['desc']
-                    let price = book_detail['price']
-                    let isbn = book_detail['isbn']
-                    let image = book_detail['image']
-                    let author = book_detail['author']
-                    let category = book_detail['category']
-                    let status = book_detail['status']
-                    let progress = book_detail['progress']
-                    let bokYN = book_detail['bokYN']
-                    console.log(title)
-                    console.log('책정보', book_detail)
-                    $('#book-title').text(title)
-                    $('#book-cover').attr("src", image);
-                    $('#book-desc').text(desc)
-                    $('#book-price').text(price+"원")
-                    $('#book-author').text(author)
-                    // $('#book-isbn').text(isbn)
-                    $('#book-isbn').val(isbn)
-                    $('#book-category').text(category)
-                    $('#book-status').text(status)
-                    $('#book-progress').text(progress+"%")
+        type: "GET",
+        url: "/myBookDetails" + "?isbn=" + parsedIsbn,
+        data: {},
+        success: function (response) {
+            console.log(response["msg"])
+            if (response["result"] == "success") {
+                console.log("내 서재 조회 성공");
+                let book_detail = response["details"]
+                let title = book_detail['title']
+                let desc = book_detail['desc']
+                let price = book_detail['price']
+                let isbn = book_detail['isbn']
+                let image = book_detail['image']
+                let author = book_detail['author']
+                let category = book_detail['category']
+                let status = book_detail['status']
+                let progress = book_detail['progress']
+                let bokYN = book_detail['bokYN']
+                console.log(title)
+                console.log('책정보', book_detail)
+                $('#book-title').text(title)
+                $('#book-cover').attr("src", image);
+                $('#book-desc').text(desc)
+                $('#book-price').text(price + "원")
+                $('#book-author').text(author)
+                // $('#book-isbn').text(isbn)
+                $('#book-isbn').val(isbn)
+                $('#book-category').text(category)
+                $('#book-status').text(status)
+                $('#book-progress').text(progress + "%")
+                console.log(bokYN)
+                if (bokYN == "false") {
                     console.log(bokYN)
-                    if(bokYN=="false"){
-                        console.log(bokYN)
-                        $('#book-bok-icon').css("display", "none")
-                    }
-
+                    $('#book-bok-icon').css("display", "none")
                 }
+
             }
-        });
+        }
+    });
 }
 
 // function get_more_toc(){}
@@ -339,44 +338,61 @@ function clear_input_url() {
     $("#url-input-box").val("");
 }
 
-function add_note(parsedIsbn, noteMessage, noteType, noteHightlight, noteRef){
-
+// function add_note(parsedIsbn, noteMessage, noteType, noteRef, noteHightlight)
+function add_note(parsedIsbn, noteMessage, noteRef) {
     $.ajax({
-            type: "POST",
-            url: "/addNote",
-            data: { isbn: parsedIsbn,
-                    note_type: noteType,
-                    note_message: noteMessage,
-                    note_ref: noteRef,
-                    note_keep: noteHightlight
-                    },
-            success: function (response) { // 성공하면
-                if (response["result"] == "success") {
-                    $('.toast').toast('show')
-                    $('.toast-body').text(response["msg"])
-                }
+        type: "POST",
+        url: "/addNote",
+        data: {
+            isbn: parsedIsbn,
+            note_message: noteMessage,
+            note_ref: noteRef
+        },
+        success: function (response) { // 성공하면
+            if (response["result"] == "success") {
+                $('.toast').toast('show')
+                $('.toast-body').text(response["msg"])
             }
-        });
+        }
+    });
 
 }
+
 function view_notes() {
+    const parsedUrl = new URL(window.location.href);
+    console.log(parsedUrl.searchParams.get("isbn")); // "123"
+    const parsedIsbn = parsedUrl.searchParams.get("isbn");
+
     console.log("노트불러오기=======")
     $.ajax({
         type: "GET",
-        url: "/viewNotes",
+        url: "/viewNotes" + "?isbn=" + parsedIsbn,
         data: {},
         success: function (response) {
             console.log(response["msg"])
             let notes = response["notes"]
             console.log(notes)
+            console.log(notes[0])
             for (let i = 0; i < notes.length; i++) {
-                console.log(notes[i])
-
-                // let listrow = `<li class="list-group-item d-flex justify-content-between align-items-center" onclick="my_books(encodeURI('${name}'))">
-                //                     ${name}
-                //                     <span class="badge badge-primary badge-pill">${count}</span
-                //                 </li>`
-                // $('#category-group').append(listrow);
+                let note_message = notes[i]['message'];
+                let note_ref = notes[i]['reference'];
+                // if (notes[i]['keep'] == 'highlight') {
+                //     let cardnote = `<div class="card bg-primary text-white p-3">
+                //             <div class="card-body">
+                //                 <p class="card-text">${note_message}</p>
+                //                 <p class="blockquote-footer text-white"><small>${note_ref}</small></p>
+                //             </div>
+                //         </div>`
+                //        $('#note-list').append(cardnote);
+                // } else {
+                    let cardnote = `<div class="card">
+                            <div class="card-body">
+                                <p class="card-text">${note_message}</p>
+                                <p class="card-text"><small class="text-muted">${note_ref}</small></p>
+                            </div>
+                        </div>`
+                       $('#note-list').append(cardnote);
+                // }
             }
         }
     });

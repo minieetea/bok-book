@@ -40,7 +40,6 @@
             $("#book-info").html("");
             $("#wish-info").html("");
             view_details();
-            view_notes();
 
             $('#noteModal').on('show.bs.modal', function (event) {
                 console.log("보인다노트모달");
@@ -82,21 +81,16 @@
                 console.log(parsedUrl.searchParams.get("isbn")); // "123"
                 const parsedIsbn = parsedUrl.searchParams.get("isbn");
 
-                console.log("저장하련다");
-                console.log($('input:radio[name="noteTypeOptions"]:checked').val()); //라디오버튼 선택된 값 가져오기
-                console.log($('input:checkbox[id="highlightCheck"]').val()); //라디오버튼 선택된 값 가져오기
-                console.log($('#note-message').val()); //내용가져오기
-                console.log($('#note_ref').val()); //출처가져오기
-
-                let noteType = $('input:radio[name="noteTypeOptions"]:checked').val(); //라디오버튼 선택된 값 가져오기
-                let noteHightlight = $('input:checkbox[id="highlightCheck"]').val(); //라디오버튼 선택된 값 가져오기
+                // let noteType = $('input:radio[name="noteTypeOptions"]:checked').val(); //라디오버튼 선택된 값 가져오기
+                // let noteHightlight = $('input:checkbox[id="highlightCheck"]:checked').val(); //체크박스 선택된 값 가져오기
+                // console.log(noteHightlight)
                 let noteMessage = $('#note-message').val(); //내용가져오기
                 //TODO 내용은 필수값으로 처리해야함
                 let noteRef = $('#note_ref').val(); //출처가져오기
-
-                add_note(parsedIsbn, noteMessage, noteType, noteHightlight, noteRef);
-
+                add_note(parsedIsbn,noteMessage,noteRef)
+                // add_note(parsedIsbn, noteMessage, noteType, noteRef, noteHightlight);
             })
+            view_notes();
         });
 
     </script>
@@ -141,42 +135,7 @@
 
     <h5 class="card-title" style="font:bold" data-toggle="modal" data-target="#noteModal" data-whatever="${isbn}">독서노트
         추가하기</h5>
-    <div class="card-columns">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Card title that wraps to a new line</h5>
-                <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer.</p>
-            </div>
-        </div>
-        <div class="card p-3">
-            <blockquote class="blockquote mb-0 card-body">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-                <footer class="blockquote-footer">
-                    <small class="text-muted">
-                        Someone famous in <cite title="Source Title">Source Title</cite>
-                    </small>
-                </footer>
-            </blockquote>
-        </div>
-        <div class="card bg-primary text-white text-center p-3">
-            blockquote class="blockquote mb-0">
-            <p>강렬한 구절.</p>
-            <footer class="blockquote-footer text-white">
-                <small>
-                    Someone famous in <cite title="Source Title">Source Title</cite>
-                </small>
-            </footer>
-            </blockquote>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">긴 타이틀을 남겨보면 어떻게 되는지 한번 남겨보자 </h5>
-                <p class="card-text">This is another card with title and supporting text below. This card has some
-                    additional content to make it slightly taller overall.</p>
-                <p class="card-text"><small class="text-muted">3 page </small></p>
-            </div>
-        </div>
+    <div class="card-columns" id="note-list">
     </div>
 
 </div>
@@ -191,30 +150,29 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="noteTypeOptions" id="noteType_body"
-                               value="body">
-                        <label class="form-check-label" for="noteType_body">본문</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="noteTypeOptions" id="noteType_ref"
-                               value="ref">
-                        <label class="form-check-label" for="noteType_ref">인용</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="noteTypeOptions" id="noteType_memo"
-                               value="memo">
-                        <label class="form-check-label" for="noteType_memo">메모</label>
-                    </div>
+<!--                    <div class="form-check form-check-inline">-->
+<!--                        <input class="form-check-input" type="radio" name="noteTypeOptions" id="noteType_body"-->
+<!--                               value="body">-->
+<!--                        <label class="form-check-label" for="noteType_body">본문</label>-->
+<!--                    </div>-->
+<!--                    <div class="form-check form-check-inline">-->
+<!--                        <input class="form-check-input" type="radio" name="noteTypeOptions" id="noteType_ref"-->
+<!--                               value="ref">-->
+<!--                        <label class="form-check-label" for="noteType_ref">인용</label>-->
+<!--                    </div>-->
+<!--                    <div class="form-check form-check-inline">-->
+<!--                        <input class="form-check-input" type="radio" name="noteTypeOptions" id="noteType_memo"-->
+<!--                               value="memo">-->
+<!--                        <label class="form-check-label" for="noteType_memo">메모</label>-->
+<!--                    </div>-->
                     <div class="form-group">
                         <label for="note-message" class="col-form-label">내용</label>
                         <textarea class="form-control" id="note-message"></textarea>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="highlightCheck" value="highlight">
-                        <label class="form-check-label" for="highlightCheck">강조</label>
-                    </div>
-
+<!--                    <div class="form-check form-check-inline">-->
+<!--                        <input class="form-check-input" type="checkbox" id="highlightCheck" value="highlight">-->
+<!--                        <label class="form-check-label" for="highlightCheck">강조</label>-->
+<!--                    </div>-->
                     <div class="form-group">
                         <label for="note_ref" class="col-form-label">출처</label>
                         <input type="text" class="form-control" id="note_ref"></input>
