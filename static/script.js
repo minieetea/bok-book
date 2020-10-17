@@ -133,7 +133,7 @@ function buy_mybook(item, bokYN) { //위시리스트에 넣어둔 책을 사려�
                 $('.toast').toast('show')
                 $('.toast-body').text(response["msg"])
                 $("#wish-info").html("");
-                my_wishlist();
+                window.location.reload();
             }
         }
     })
@@ -198,17 +198,31 @@ function append_vercard_wish(url, image, isbn) {
     $('#wish-info').append(vercard);
 }
 
-function append_mybooks(i, title, url, author, status, progress, isbn) {
-    let tablerow =
+function append_mybooks(i, title, url, status, bokYN, isbn) {
+
+    if (bokYN == "true") {
+        console.log("응응")
+        let tablerow =
         `<tr>
                     <th scope="row">${i}</th>
                     <td><a href="${url}">${title}</a></td>
-                    <td>${author}</td>
-                    <td>${progress}</td>
                     <td>${status}</td>
-                    <td><button type="button" value="${isbn}" onclick="open_details('${isbn}')">자세히보기</button></td>
+                    <td><span class="badge badge-info" id="bokYN-badge">복카드구매</span></td>
+                    <td><button type="button" value="${isbn}" onclick="open_details('${isbn}')">독서노트</button></td>
         </tr>`
-    $('#mybook-list').append(tablerow);
+        $('#mybook-list').append(tablerow);
+    }
+    else {
+        let tablerow =
+        `<tr>
+                    <th scope="row">${i}</th>
+                    <td><a href="${url}">${title}</a></td>
+                    <td>${status}</td>
+                    <td><span class="badge badge-secondary" id="bokYN-badge">직접구매</span></td>
+                    <td><button type="button" value="${isbn}" onclick="open_details('${isbn}')">독서노트</button></td>
+        </tr>`
+        $('#mybook-list').append(tablerow);
+    }
 }
 
 function open_details(isbn) {
@@ -262,6 +276,7 @@ function view_details(){
 
 function get_categories() { // 읽는 책을 조회한다.
     console.log('내서재 카테고리들 조회시작');
+    $('#category-group').html("");
 
     $.ajax({
         type: "GET",
