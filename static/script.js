@@ -28,7 +28,7 @@ function add_wishlist() { //선택한 아이템을 위시리스트로 옮겨야�
         alert("주소를 입력해주세요")
         $("#url-input-box").focus()
         return
-    } else if (!url.includes("yes24.com")) {
+    } else if (!url.includes("www.yes24.com")) {
         alert("지원하지 않는 사이트입니다")
     } else {
         $.ajax({
