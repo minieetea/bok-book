@@ -59,9 +59,9 @@ def add_wishlist():
     sr = db.wishlist.find_one({'isbn': isbn})
     if sr is None:
         db.wishlist.insert_one(book)
-        return jsonify({'result': 'success', 'msg': '위시리스트 추가 성공'})
+        return jsonify({'result': 'success', 'msg': '도서를 담았습니다.'})
     else:
-        return jsonify({'result': 'success', 'msg': '중복도서가 있습니다'})
+        return jsonify({'result': 'success', 'msg': '이미 담아 도서입니다.'})
 
 
 # 내서재 추가
@@ -162,18 +162,18 @@ def buy_mybook():
                              {"$set": {"status": "READY", "progress": "0", "category": "미분류", "bokYN": bokYN_receive}},
                              upsert=False)
             db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
-            return jsonify({'result': 'success', 'msg': '소장도서 복카드로 업데이트함'})
+            return jsonify({'result': 'success', 'msg': wishbook['title']+'는(은) 이미 소장하고 있어, 복카드 구매를 추가했습니다.'})
         else:
             db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
-            return jsonify({'result': 'success', 'msg': '소장도서'})
+            return jsonify({'result': 'success', 'msg': wishbook['title']+'는(은) 이미 소장하고 있는 도서입니다.'})
     else: #내 서재에 없으면
         if wishbook is not None: #위시리스트에 있으면
             db.mybook.insert_one(wishbook)  # 서재에 추가
             db.mybook.update({'isbn': isbn_receive}, {"$set": {"status": "READY", "progress": "0", "category": "미분류", "bokYN": bokYN_receive}}, upsert=False)
             db.wishlist.delete_one({'isbn': isbn_receive})  # 위시에서 삭제
-            return jsonify({'result': 'success', 'msg': '도서구매 완료'})
+            return jsonify({'result': 'success', 'msg': wishbook['title']+' 도서를 구매했습니다.'})
         else:
-            return jsonify({'result': 'success', 'msg': '위시리스트에 존재하지 않음'})
+            return jsonify({'result': 'success', 'msg': wishbook['title']+'는(은) 위시리스트에서 제거된 도서입니다.'})
 
 
 @app.route('/getCategories', methods=['GET'])

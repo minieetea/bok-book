@@ -51,14 +51,18 @@
                 var button = $(event.relatedTarget)
                 var isbn = button.data('whatever')
 
-                $('#btn-bok-No').on('click', function (event) {
-                    console.log("youser values are " + $(this).data("value") + isbn)
+                $('#btn-bok-No').on('click', function () {
+                    console.log("your values are " + $(this).data("value") + isbn)
                     buy_mybook(isbn, $(this).data("value"))
+                    my_books();
+                    get_categories();
                 });
 
-                $('#btn-bok-Yes').on('click', function (event) {
+                $('#btn-bok-Yes').on('click', function () {
                     console.log("youser values are " + $(this).data("value") + isbn)
                     buy_mybook(isbn, $(this).data("value"))
+                    my_books();
+                    get_categories();
                 });
             })
         });
@@ -154,7 +158,7 @@
     </div>
 </div>
 
-  <div class="toast fade hide" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast fade hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3600">
     <div class="toast-header">
       <strong class="mr-auto">✉️ 메세지 도착!</strong>
       <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">

@@ -37,7 +37,8 @@ function add_wishlist() { //선택한 아이템을 위시리스트로 옮겨야�
             data: {url: url},
             success: function (response) { // 성공하면
                 if (response["result"] == "success") {
-                    console.log(response["msg"])
+                    $('.toast').toast('show')
+                    $('.toast-body').text(response["msg"])
                     $("#wish-info").html("");
                     my_wishlist()
                 }
@@ -89,11 +90,10 @@ function my_books(query) { // 카테고리별 도서를 조회한다.
                 for (let i = 0; i < book.length; i++) {
                     let title = book[i]['title'];
                     let url = book[i]['url'];
-                    let author = book[i]['author'];
                     let isbn = book[i]['isbn'];
                     let status = book[i]['status'];
-                    let progress = book[i]['progress'];
-                    append_mybooks(i + 1, title, url, author, status, progress, isbn);
+                    let bokYN = book[i]['bokYN'];
+                    append_mybooks(i + 1, title, url, status, bokYN, isbn);
                 }
             }
         }
@@ -153,11 +153,12 @@ function add_mybook() { //바로 책에 추가한다.
             data: {url: url},
             success: function (response) { // 성공하면
                 if (response["result"] == "success") {
-                    console.log(response["msg"])
+                    $('.toast').toast('show')
+                    $('.toast-body').text(response["msg"])
                     window.location.reload();
                 }
             }
-        })
+        });
     }
 }
 

@@ -132,15 +132,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .toast {
     position: fixed;
-    top: 30px;
+    bottom: 30px;
     right: 30px;
     box-shadow: 3px 3px 3px #00000038;
     padding: 20px;
     background-color: whitesmoke;
     border-radius: 8px;
     border-color: antiquewhite;
+    z-index: 10;
+    min-width: 300px;
 }
-}
+
 
 .toast-body {
     padding-top: 15px;
