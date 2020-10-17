@@ -190,6 +190,34 @@ def get_categories():
     return jsonify({'result': 'success', 'msg': '카테고리 조회완료', 'categories': all_category})
 
 
+@app.route('/addNote', methods=['POST'])
+def add_note():
+    isbn_receive = request.form['isbn']
+    note_type = request.form['note_type']
+    note_message = request.form['note_type']
+    note_ref = request.form['note_type']
+    note_keep = request.form['note_keep']
+
+    note = {
+        "isbn": isbn_receive,
+        "type": note_type,
+        "keep": note_keep,
+        "message": note_message,
+        "reference": note_ref
+    }
+    db.note.insert_one(note)
+    return jsonify({'result': 'success', 'msg': '노트를 추가했습니다.'})
+
+@app.route('/viewNotes', methods=['GET'])
+def view_notes():
+    isbn_receive = request.args.get('isbn')
+    notes = list(db.note.find({'isbn': isbn_receive}, {'_id': False}))
+    print('독서노트 모든아이템: ', notes)
+    return jsonify({'result': 'success', 'msg': '독서노트 조회완료', 'notes': notes})
+
+
+
+
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
 
