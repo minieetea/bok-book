@@ -75,9 +75,8 @@
             })
 
              $('.st-items').on('click', function (event) {
-                // const parsedIsbn = isbn_url_parser()
-                //  console.log($(this).data("status"));
-                update_status($(this).data("status"))
+                const parsedIsbn = isbn_url_parser()
+                update_status(parsedIsbn, $(this).data("status"))
             })
         });
 
