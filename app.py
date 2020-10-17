@@ -228,9 +228,6 @@ def view_notes():
 
 @app.route('/updateStatus', methods=['POST'])
 def stop_read():
-    # isbn 받아서
-    # 상태를 변경
-    # 상태를 중단으로 변경 (doing -> stop)
     isbn_receive = request.form['isbn']
     status_receive = request.form['status']
     db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'status': status_receive}})
@@ -238,19 +235,14 @@ def stop_read():
 
 @app.route('/updateProgress', methods=['POST'])
 def update_progress():
-    # isbn 받아서
-    # 5%씩 증가시키기
-    # 100에 이르면 완료상태로 업데이트
     isbn_receive = request.form['isbn']
     mb = db.mybook.find_one({"isbn": isbn_receive})
-    print(mb)
-    print(mb['progress'])
+
     new_progress = str(int(mb['progress']) + 5)
-    print(new_progress)
     if new_progress == '100':
         db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'status': 'DONE', 'progress': new_progress}})
     else:
-        db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'progress': new_progress}})
+        db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'status': 'DOING', 'progress': new_progress}})
     return jsonify({'result': 'success', 'msg': '변경완료'})
 
 if __name__ == '__main__':

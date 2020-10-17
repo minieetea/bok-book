@@ -54,6 +54,26 @@
 
                 });
             });
+            //멈추기 완료버튼
+            $('.btn-status-update').on('click', function (event) {
+                console.log("클릭해라" + $(this).data("status"))
+
+                const parsedUrl = new URL(window.location.href);
+                console.log(parsedUrl.searchParams.get("isbn")); // "123"
+                const parsedIsbn = parsedUrl.searchParams.get("isbn");
+
+                update_status(parsedIsbn, $(this).data("status"));
+            })
+            //읽기버튼
+            $('.btn-progress-update').on('click', function (event) {
+                console.log("클릭해라" + $(this).data("status"))
+
+                const parsedUrl = new URL(window.location.href);
+                console.log(parsedUrl.searchParams.get("isbn")); // "123"
+                const parsedIsbn = parsedUrl.searchParams.get("isbn");
+
+                update_progress(parsedIsbn);
+            })
         });
 
     </script>
@@ -76,11 +96,20 @@
                     <h5 class="card-title" id="book-title">title</h5>
                     <p class="card-text" id="book-author">author</p>
                     <p class="card-sub-text" id="book-price">price</p>
-                    <p class="card-sub-text" id="book-isbn">isbn</p>
+<!--                    <p class="card-sub-text" id="book-isbn">isbn</p>-->
+                    <p class="card-text" id="book-desc">desc</p>
                     <p class="card-sub-text" id="book-category">category</p>
                     <p class="card-sub-text" id="book-status">status</p>
-                    <p class="card-sub-text" id="book-progress">progress</p>
-                    <p class="card-text" id="book-desc">desc</p>
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group mr-2" role="group" aria-label="First group">
+                            <button type="button" class="btn btn-secondary btn-progress-update">읽기(<span id="book-progress">progress</span>)</button>
+                            <button type="button" class="btn btn-secondary btn-status-update" data-status="STOP">멈추기</button>
+                            <button type="button" class="btn btn-secondary btn-status-update" data-status="DONE">완료</button>
+                        </div>
+                        <div class="btn-group mr-2" role="group" aria-label="Second group">
+                            <button type="button" class="btn btn-danger btn-status-update" data-status="DELETED">삭제</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

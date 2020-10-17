@@ -262,7 +262,6 @@ function open_details(isbn) {
 
 function view_details(){
     const parsedUrl = new URL(window.location.href);
-
     console.log(parsedUrl.searchParams.get("isbn")); // "123"
     const parsedIsbn = parsedUrl.searchParams.get("isbn");
 
@@ -292,7 +291,8 @@ function view_details(){
                     $('#book-desc').text(desc)
                     $('#book-price').text(price+"원")
                     $('#book-author').text(author)
-                    $('#book-isbn').text(isbn)
+                    // $('#book-isbn').text(isbn)
+                    $('#book-isbn').val(isbn)
                     $('#book-category').text(category)
                     $('#book-status').text(status)
                     $('#book-progress').text(progress+"%")
