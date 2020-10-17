@@ -160,16 +160,18 @@ function add_mybook() { //바로 책에 추가한다.
     }
 }
 
-function update_status(isbn, status) {
-    console.log("상태변경하기", isbn, status)
+function update_status(status) {
+    const parsedIsbn = isbn_url_parser()
+    console.log("상태변경하기", parsedIsbn, status)
     $.ajax({
         type: "POST",
         url: "/updateStatus",
-        data: {isbn: isbn, status: status},
+        data: {isbn: parsedIsbn, status: status},
         success: function (response) { // 성공하면
             if (response["result"] == "success") {
                 $('.toast').toast('show')
                 $('.toast-body').text(response["msg"])
+                $('#status-category').text(status)
             }
         }
     });
@@ -206,9 +208,9 @@ function append_vercard(image, isbn, progress) {
                      </div>
                   </div>`
     $('#book-info').append(vercard);
-    if (progress < 25) {
-        $('.progress-bar').css("color", "black")
-    }
+    // if (progress > 15) {
+    //     $('.progress-bar').css("color", "white")
+    // }
 
 }
 
@@ -289,10 +291,9 @@ function view_details() {
                 $('#book-desc').text(desc)
                 $('#book-price').text(price + "원")
                 $('#book-author').text(author)
-                // $('#book-isbn').text(isbn)
                 $('#book-isbn').val(isbn)
                 $('#book-category').text(category)
-                $('#book-status').text(status)
+                $('#status-category').text(status)
                 $('#book-progress').text(progress + "%")
                 console.log(bokYN)
                 if (bokYN == "false") {
@@ -304,8 +305,6 @@ function view_details() {
         }
     });
 }
-
-// function get_more_toc(){}
 
 function get_categories() { // 읽는 책을 조회한다.
     console.log('내서재 카테고리들 조회시작');
@@ -337,6 +336,59 @@ function get_categories() { // 읽는 책을 조회한다.
     });
 }
 
+function make_category_list() { // 읽는 책을 조회한다.
+    console.log('내서재 카테고리들 조회시작');
+    $('#dropdown-category-list').html("");
+
+    $.ajax({
+        type: "GET",
+        url: "/getCategories",
+        data: {},
+        success: function (response) {
+            console.log(response["msg"])
+            let category = response["categories"]
+            console.log(category)
+            for (let i = 0; i < category.length; i++) {
+                let name = category[i]['name'];
+                let count = category[i]['count'];
+                console.log(category[i], name, count)
+
+                let listrow = `<a class="dropdown-item ct-item" onclick="update_category('${name}')">${name}</a>`
+                $('#dropdown-category-list').append(listrow);
+            }
+        }
+    });
+}
+
+function isbn_url_parser() {
+    const parsedUrl = new URL(window.location.href);
+    console.log(parsedUrl.searchParams.get("isbn")); // "123"
+    const parsedIsbn = parsedUrl.searchParams.get("isbn");
+    return parsedIsbn;
+}
+
+function update_category(name) {
+
+    const parsedIsbn = isbn_url_parser();
+
+    console.log("카테고리 변경 api 호출", parsedIsbn, name)
+    $.ajax({
+        type: "POST",
+        url: "/updateCategory",
+        data: {
+            isbn: parsedIsbn,
+            name: name
+        },
+        success: function (response) { // 성공하면
+            if (response["result"] == "success") {
+                $('.toast').toast('show')
+                $('.toast-body').text(response["msg"])
+            }
+        }
+    });
+    $('#book-category').text(name);
+}
+
 function add_category(name) {
     console.log("카테고리 추가 api 호출")
     $.ajax({
@@ -354,11 +406,13 @@ function add_category(name) {
     });
 
 }
+
+
 function clear_input_url() {
     $("#url-input-box").val("");
 }
 
-// function add_note(parsedIsbn, noteMessage, noteType, noteRef, noteHightlight)
+
 function add_note(parsedIsbn, noteMessage, noteRef) {
     $.ajax({
         type: "POST",
@@ -379,9 +433,7 @@ function add_note(parsedIsbn, noteMessage, noteRef) {
 }
 
 function view_notes() {
-    const parsedUrl = new URL(window.location.href);
-    console.log(parsedUrl.searchParams.get("isbn")); // "123"
-    const parsedIsbn = parsedUrl.searchParams.get("isbn");
+    const parsedIsbn = isbn_url_parser();
 
     console.log("노트불러오기=======")
     $.ajax({
@@ -396,22 +448,14 @@ function view_notes() {
             for (let i = 0; i < notes.length; i++) {
                 let note_message = notes[i]['message'];
                 let note_ref = notes[i]['reference'];
-                // if (notes[i]['keep'] == 'highlight') {
-                //     let cardnote = `<div class="card bg-primary text-white p-3">
-                //             <div class="card-body">
-                //                 <p class="card-text">${note_message}</p>
-                //                 <p class="blockquote-footer text-white"><small>${note_ref}</small></p>
-                //             </div>
-                //         </div>`
-                //        $('#note-list').append(cardnote);
-                // } else {
-                    let cardnote = `<div class="card">
+
+                let cardnote = `<div class="card">
                             <div class="card-body">
                                 <p class="card-text">${note_message}</p>
                                 <p class="card-text"><small class="text-muted">${note_ref}</small></p>
                             </div>
                         </div>`
-                       $('#note-list').append(cardnote);
+                $('#note-list').append(cardnote);
                 // }
             }
         }

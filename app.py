@@ -250,6 +250,13 @@ def add_category():
     db.category.insert_one({'name': category_name, 'count': 0})
     return jsonify({'result': 'success', 'msg': '카테고리가 추가되었습니다'})
 
+@app.route('/updateCategory', methods=['POST'])
+def update_category():
+    isbn_receive = request.form['isbn']
+    category_name = request.form['name']
+    db.mybook.update_one({"isbn": isbn_receive}, {'$set': {'category': category_name}})
+    return jsonify({'result': 'success', 'msg': '변경완료'})
+
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
 
